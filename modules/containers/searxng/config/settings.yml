@@ -1,0 +1,143 @@
+# Docs: https://docs.searxng.org/admin/settings/index.html
+
+# You can find the default settings.yml on:
+#  https://github.com/searxng/searxng/blob/master/searx/settings.yml
+use_default_settings: true
+search:
+  autocomplete: "duckduckgo"
+  # https://docs.searxng.org/admin/searx.favicons.html
+  # Apparently favicons generate a significantly higher load so keep that in mind.
+  favicon_resolver: "duckduckgo"
+  default_lang: "all"
+  languages:
+    - all
+    - en
+    - pt-PT
+server:
+  bind_address : "0.0.0.0"
+  # secret_key: ""
+  image_proxy: true
+  limiter: true
+  method: "GET"
+valkey:
+  url: "valkey://valkey:6379/0"
+ui:
+  query_in_title: true
+  infinite_scroll: true
+  center_alignment: true
+  cache_url: "https://archive.today/"
+  hotkeys: "vim"
+# outgoing:
+#   proxies:
+#     all://:
+#       - socks5h://tor:9050
+#   using_tor_proxy: true
+plugins:
+  searx.plugins.oa_doi_rewrite.SXNGPlugin:
+    active: true
+categories_as_tabs:
+  general:
+  images:
+  videos:
+  # news:
+  map:
+  music:
+  it:
+  science:
+  files:
+  social media:
+engines:
+  # General
+  - name: "brave"
+    disabled: true
+  - name: "google"
+    disabled: true
+  - name: "wikipedia"
+    disabled: true
+  - name: "wikidata"
+    disabled: true
+  # Images
+  - name: "bing images"
+    disabled: true
+  - name: "brave.images"
+    disabled: true
+  - name: "qwant images"
+    disabled: true
+  - name: "startpage images"
+    disabled: true
+  - name: "artic"
+    disabled: true
+  - name: "deviantart"
+    disabled: true
+  - name: "flickr"
+    disabled: true
+  - name: "openverse"
+    disabled: true
+  - name: "pinterest"
+    disabled: true
+  - name: "unsplash"
+    disabled: true
+  - name: "wikicommons.images"
+    disabled: true
+  # Videos
+  - name: "bing videos"
+    disabled: true
+  - name: "brave.videos"
+    disabled: true
+  - name: "google videos"
+    disabled: true
+  - name: "qwant videos"
+    disabled: true
+  - name: "dailymotion"
+    disabled: true
+  - name: "youtube"
+    weight: 10
+  # Map
+  - name: "photon"
+    disabled: true
+  # Music
+  - name: "deezer"
+    disabled: false
+  # IT
+  - name: "docker hub"
+    disabled: true
+  - name: "hoogle"
+    disabled: true
+  - name: "pypi"
+    disabled: true
+  - name: "codeberg"
+    disabled: false
+  - name: "gitlab"
+    disabled: false
+  - name: "gentoo"
+    disabled: true
+  - name: "nixos wiki"
+    disabled: false
+  - name: "hackernews"
+    disabled: false
+  # Files
+  - name: "apk mirror"
+    disabled: false
+  - name: "fdroid"
+    disabled: false
+  - name: "google play apps"
+    disabled: false
+  - name: "1337x"
+    disabled: false
+  - name: "nyaa"
+    disabled: false
+  # Social media
+  - name: "lemmy communities"
+    disabled: true
+  - name: "lemmy users"
+    disabled: true
+  - name: "mastodon hashtags"
+    disabled: true
+  - name: "mastodon users"
+    disabled: true
+  - name: "reddit"
+    disabled: false
+    weight: 10
+  - name: "tootfinder"
+    disabled: true
+

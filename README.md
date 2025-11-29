@@ -6,8 +6,37 @@ My NixOS configuration for my server/NAS/homelab.
 
 As I used disko to do the initial partition and filesystem setup, I could've imported it in the NixOS configuration to handle filesystems instead of using the fileSystems option, but because I don't know how disko would've handled future disk additions, because I of the /home problems (ZFS and systemd both tried to mount it and caused problems, unless the mountpoint was legacy) which forced me to use the fileSystems option just for it (now that I think about it, maybe disko would've handled it even though it didn't mount it during initial install), and because it was simple enough, I just ended up leaving the disko file only for the initial installation and using the fileSystems option like normal.
 
-Look at comments in my .nix files for additional thoughts.
+Look at comments in my .nix files for additional thoughts (this repo may have missing comments from my desktop nix config).
 The comments in the [disko-config.nix](./disko-config.nix) file have a lot of thoughts about ZFS.
+
+## How to create a git submodule
+
+This is what I used to import my neovim config. The 'config' folder can't exist when running this command.
+```bash
+git submodule add https://github.com/p-laranjinha/neovim-config modules/neovim/config/
+```
+
+## After installation configuration
+
+I did my initial install using a very basic config, so after making the config better I had to do the following manual steps.
+
+Copy this repo to the server.
+```bash
+cd ..
+scp -r nix-server-config/ pebble@<server ip>:./nix-server-config
+```
+
+Copy ssh and age keys to the server. Generated on my desktop because I already had the tools configured. Remember to create the folders in the server first.
+```bash
+scp id_ed25519 pebble@<server ip>:./.ssh/
+scp id_ed25519.pub pebble@<server ip>:./.ssh/
+scp keys.txt pebble@<server ip>:./.config/sops/age
+```
+
+Rebuild the config.
+```bash
+sudo nixos-rebuild switch --flake ~/nix-server-config
+```
 
 ## Initial install
 
