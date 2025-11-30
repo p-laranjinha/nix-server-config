@@ -61,6 +61,9 @@
     "/home" = {
       device = "zdata/home";
       fsType = "zfs";
+      # Makes /home be mounted during stage1 of the boot process, which is required
+      #  for things like sops-nix being able to get the age keys during boot.
+      neededForBoot = true;
     };
     "/" = {
       device = "zroot/root";

@@ -52,7 +52,7 @@
   };
   services.fail2ban.enable = true;
 
-  networking.interfaces.enp14s0.wakeOnLan.enable = true;
+  networking.interfaces.enp9s0.wakeOnLan.enable = true;
 
   services.tailscale.enable = true;
 
