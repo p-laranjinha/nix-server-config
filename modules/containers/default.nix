@@ -35,6 +35,7 @@
     "searxng"
     "searxng-valkey"
     "homepage"
+    "caddy"
     # "public" # For everything that may be exposed to the internet.
   ];
 in {
@@ -63,8 +64,14 @@ in {
           mainGroup = "homepage";
           groups = [];
         };
+        caddy = {
+          n = 3;
+          mainGroup = "caddy";
+          groups = [];
+        };
       };
       containerDataDir = "${this.homeDirectory}/container-data";
+      rootCapabilities = ["CHOWN" "DAC_OVERRIDE" "FOWNER" "FSETID" "KILL" "NET_BIND_SERVICE" "SETFCAP" "SETGID" "SETPCAP" "SETUID" "SYS_CHROOT"];
     };
     funcs = {
       containers = {

@@ -13,7 +13,7 @@
 in {
   systemd.tmpfiles.rules = [
     "d ${searxng-config} 2770 ${this.username} ${vars.searxng.mainGroup} - -"
-    "d ${vars.dataDir}/searxng - ${this.username} - - -"
+    "d ${vars.dataDir}/searxng 2770 ${this.username} ${vars.searxng.mainGroup} - -"
     "d ${searxng-data} 2770 ${this.username} ${vars.searxng.mainGroup} - -"
     "d ${valkey-data} 2770 ${this.username} ${vars.searxng-valkey.mainGroup} - -"
   ];
