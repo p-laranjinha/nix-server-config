@@ -5,14 +5,16 @@
   ...
 }: {
   networking.hostName = this.hostname;
-  # I think this should be random, but zhome isn't automatically mounted with a different value.
-  networking.hostId = "8425e349";
+  # Obtained via `head -c 8 /etc/machine-id`, might require manually mounting
+  #  /home on first boot.
+  networking.hostId = "59718dc4";
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.pebble = {
     isNormalUser = true;
     description = this.fullname;
     extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
+    hashedPassword = "$y$j9T$cp4nR3fKfJGJhhm.SqsIb/$nQo/Jh/PtNDo5ZX0UUlLXMMlK31VTa1tZcmuJWhOx75";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOIZeqsx4YGlynKAgAW/kFvcdb3Ec4ES+b+j8eZuQ6l2 pebble@orange"
     ];

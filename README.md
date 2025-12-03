@@ -9,6 +9,13 @@ As I used disko to do the initial partition and filesystem setup, I could've imp
 Look at comments in my .nix files for additional thoughts (this repo may have missing comments from my desktop nix config).
 The comments in the [disko-config.nix](./disko-config.nix) file have a lot of thoughts about ZFS.
 
+### Impermanence
+
+I followed [this guide](https://gist.github.com/lesserfish/8c0cfc6bb07c17c5af8a3759d2eb9e9a) to help me understand how to setup impermanence with ZFS.
+
+This basically consists of setting up ZFS normally but you create an initial blank snapshot of the root parition (I did it with disko), and then rollback to that snapshot on every boot.
+You can create partitions of root sub-directories to exclude them from the snapshot. One of these directories is usually /persist that you then use with the impermanence submodule to symlink directories or files in impermanent directories to it.
+
 ## How to create a git submodule
 
 This is what I used to import my neovim config. The 'config' folder can't exist when running this command.
@@ -68,9 +75,11 @@ I included `--no-filesystems` because I intended to let disko handle filesystems
 sudo nixos-generate-config --no-filesystems --root /mnt
 ```
 
-I ran the final command to install NixOS. Keep in mind that this command will ask you at the end to input the root user's password. Additionally, when I ran this the configuration didn't use flakes so it'll have to be different for a flake config.
+I ran the final command to install NixOS. Keep in mind that this command will ask you at the end to input the root user's password.
 ```bash
 sudo nixos-install
+# Use the following for a flake config.
+sudo nixos-install --flake <location>#<hostname>
 ```
 
 After rebooting, I logged into root and ran the following to setup my main user's password.

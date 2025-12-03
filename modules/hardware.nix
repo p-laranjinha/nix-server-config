@@ -20,6 +20,7 @@
       efiSupport = true;
       efiInstallAsRemovable = true;
       device = "nodev";
+      zfsSupport = true;
     };
   };
   environment.systemPackages = with pkgs; [
@@ -65,6 +66,14 @@
       #  for things like sops-nix being able to get the age keys during boot.
       neededForBoot = true;
     };
+    # For impermanence.
+    "/persist" = {
+      device = "zroot/persist";
+      fsType = "zfs";
+      options = ["zfsutil"];
+      # The impermanence guide said this was needed.
+      neededForBoot = true;
+    };
     "/" = {
       device = "zroot/root";
       fsType = "zfs";
@@ -72,11 +81,6 @@
     };
     "/nix" = {
       device = "zroot/nix";
-      fsType = "zfs";
-      options = ["zfsutil"];
-    };
-    "/var" = {
-      device = "zroot/var";
       fsType = "zfs";
       options = ["zfsutil"];
     };
@@ -90,6 +94,12 @@
       device = "/dev/disk/by-id/nvme-Lexar_SSD_NM620_256GB_QAG282R016101P1157-part2";
     }
   ];
+
+  # https://gist.github.com/lesserfish/8c0cfc6bb07c17c5af8a3759d2eb9e9a
+  # This rollbacks
+  boot.initrd.postDeviceCommands = lib.mkAfter ''
+    zfs rollback -r zroot/root@blank
+  '';
 
   services.zfs.autoScrub.enable = true;
   services.zfs.autoSnapshot = {

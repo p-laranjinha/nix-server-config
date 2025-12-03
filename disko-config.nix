@@ -189,17 +189,23 @@
           root = {
             type = "zfs_fs";
             mountpoint = "/";
+            # For impermanence. Explicitly set sub-directories so they persist.
+            postCreateHook = "zfs list -t snapshot -H -o name | grep -E '^zroot/root@blank$' || zfs snapshot zroot/root@blank";
           };
-          # Not sure why /nix and /var have their own datasets, but every example
-          #  I see does this and I don't see any downside, so might as well.
+          # This probably should persist across reboots, all binaries are here.
           nix = {
             type = "zfs_fs";
             mountpoint = "/nix";
           };
-          var = {
+          # Use persistence module to symlink files and directories from
+          #  impermanent directories to here.
+          persist = {
             type = "zfs_fs";
-            mountpoint = "/var";
+            mountpoint = "/persist";
           };
+          # Examples usually make /var or /var/*** separate partitions, but
+          #  that is to limit crashes due to logs getting out of hand and
+          #  running out of storage space.
         };
       };
       zdata = {
