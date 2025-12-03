@@ -27,6 +27,21 @@ git submodule add https://github.com/p-laranjinha/neovim-config modules/neovim/c
 
 I did my initial install using a very basic config, so after making the config better I had to do the following manual steps.
 
+If I didn't configure a hashedPassword in my config, I'll have to set a password for my user on first login.
+```bash
+passwd pebble
+```
+
+Login to tailscale.
+```bash
+tailscale login
+```
+
+Login to GitHub.
+```bash
+gh auth login
+```
+
 Copy this repo to the server.
 ```bash
 cd ..
@@ -80,11 +95,6 @@ I ran the final command to install NixOS. Keep in mind that this command will as
 sudo nixos-install
 # Use the following for a flake config.
 sudo nixos-install --flake <location>#<hostname>
-```
-
-After rebooting, I logged into root and ran the following to setup my main user's password.
-```bash
-passwd pebble
 ```
 
 ### Some commands I used to experiment before the initial install
