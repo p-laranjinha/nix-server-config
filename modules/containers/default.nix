@@ -17,11 +17,6 @@
         members = [this.username];
       };
     }) (lib.length groups));
-  mkSubGidRanges = groups:
-    lib.genList (i: {
-      count = 1;
-      startGid = startGid + i;
-    }) (lib.length groups);
 
   # '+ 100000' so that these mapped gids don't conflict with the others.
   getContainerGid = group: toString (config.users.groups.${group}.gid + 100000);
@@ -76,9 +71,12 @@ in {
     funcs = {
       containers = {
         mkUidMaps = n: ["0:${toString (1 + uidGidCount * n)}:${toString uidGidCount}"];
+        # Gives me space for 1000 custom groups. Very overkill
+        # I tried using 'lib.length groups' for automatic expansion but it
+        #  caused problems when adding groups.
         mkGidMaps = n: gs:
           [
-            "0:${toString (1 + (lib.length groups) + uidGidCount * n)}:${toString uidGidCount}"
+            "0:${toString (1 + 1000 + uidGidCount * n)}:${toString uidGidCount}"
           ]
           ++ (map (g: "${getContainerGid g}:${toString (config.users.groups.${g}.gid - startGid + 1)}:1") gs);
         mkAddGroups = map (g: "${getContainerGid g}");
@@ -103,7 +101,12 @@ in {
       linger = true;
       # Required for rootless container with multiple users.
       autoSubUidGidRange = true;
-      subGidRanges = mkSubGidRanges groups;
+      subGidRanges = [
+        {
+          count = lib.length groups;
+          inherit startGid;
+        }
+      ];
     };
     users.groups = mkGroups groups;
     hm = {
@@ -174,3 +177,4 @@ in {
 #  set their permissions. Using 2___ permissions, makes it so the files created
 #  in that directory inherit the group, so I can hopefully at least read the
 #  files outside the container.
+

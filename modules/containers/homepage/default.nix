@@ -27,7 +27,7 @@ in {
             publishPorts = ["3000:3000"];
             volumes = [
               "${homepage-config}:/app/config"
-              "/run/user/1000/podman/podman.sock:/var/run/podman.sock"
+              # "/run/user/1000/podman/podman.sock:/var/run/podman.sock"
             ];
             user = funcs.mkUser "node" vars.mainGroup;
             uidMaps = funcs.mkUidMaps vars.n;

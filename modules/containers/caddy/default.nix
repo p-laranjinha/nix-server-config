@@ -23,6 +23,8 @@ in {
     "d ${caddy-data} 2770 ${this.username} ${vars.mainGroup} - -"
     "d ${caddy-data-config} 2770 ${this.username} ${vars.mainGroup} - -"
   ];
+  # Allow non-root users to bind to privileged ports like 80.
+  boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
   networking.firewall.allowedTCPPorts = [80 443];
   networking.firewall.allowedUDPPorts = [443];
   hm = {
@@ -45,7 +47,7 @@ in {
             ];
             # Doesn't have a normal user.
             user = funcs.mkUser "root" vars.mainGroup;
-            dropCapabilities = vars.rootCapabilities;
+            # dropCapabilities = vars.rootCapabilities;
             uidMaps = funcs.mkUidMaps vars.n;
             gidMaps =
               funcs.mkGidMaps

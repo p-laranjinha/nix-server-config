@@ -18,6 +18,10 @@
     ];
   };
 
+  security.sudo.extraConfig = ''
+    Defaults pwfeedback # Shows asterisks when typing password.
+  '';
+
   # Sets the configuration revision string to either the git commit reference or 'dirty'.
   # Can be seen on entries shown by 'nixos-rebuild list-generations'.
   system.configurationRevision = inputs.self.rev or "dirty";
