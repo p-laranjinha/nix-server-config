@@ -48,7 +48,7 @@ in {
               "${searxng-config}:/etc/searxng"
               "${searxng-data}:/var/cache/searxng"
             ];
-            networks = ["searxng"];
+            networks = ["searxng-internal" "searxng"];
             user = funcs.mkUser "searxng" vars.searxng.mainGroup;
             uidMaps =
               funcs.mkUidMaps
@@ -73,7 +73,7 @@ in {
             exec = "valkey-server --save 30 1 --loglevel warning";
             volumes = ["${valkey-data}:/data"];
             networkAliases = ["valkey"];
-            networks = ["searxng"];
+            networks = ["searxng-internal"];
             user = funcs.mkUser "valkey" vars.searxng-valkey.mainGroup;
             uidMaps =
               funcs.mkUidMaps
@@ -108,6 +108,7 @@ in {
       };
       networks = {
         searxng = {};
+        searxng-internal = {};
       };
     };
   };

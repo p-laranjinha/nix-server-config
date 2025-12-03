@@ -45,6 +45,7 @@ in {
               "${caddy-data}:/data"
               "${caddy-data-config}:/config"
             ];
+            networks = ["searxng" "homepage"];
             # Doesn't have a normal user.
             user = funcs.mkUser "root" vars.mainGroup;
             # dropCapabilities = vars.rootCapabilities;

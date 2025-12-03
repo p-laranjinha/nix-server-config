@@ -1,3 +1,4 @@
 * {
-	reverse_proxy /search/* 127.0.0.1:8080/search
+	reverse_proxy /search/* searxng:8080/search
+	reverse_proxy /home/* homepage:3000
 }

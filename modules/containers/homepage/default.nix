@@ -29,6 +29,7 @@ in {
               "${homepage-config}:/app/config"
               # "/run/user/1000/podman/podman.sock:/var/run/podman.sock"
             ];
+            networks = ["homepage"];
             user = funcs.mkUser "node" vars.mainGroup;
             uidMaps = funcs.mkUidMaps vars.n;
             gidMaps =
@@ -40,6 +41,9 @@ in {
               vars.groups;
           };
         };
+      };
+      networks = {
+        homepage = {};
       };
     };
   };
