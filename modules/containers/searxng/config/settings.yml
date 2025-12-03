@@ -8,7 +8,7 @@ search:
   # https://docs.searxng.org/admin/searx.favicons.html
   # Apparently favicons generate a significantly higher load so keep that in mind.
   favicon_resolver: "duckduckgo"
-  default_lang: "all"
+  default_lang: "en"
   languages:
     - all
     - en
@@ -16,6 +16,7 @@ search:
 server:
   bind_address : "0.0.0.0"
   # secret_key: ""
+  base_url: http://0.0.0.0:8080/search
   image_proxy: true
   limiter: true
   method: "GET"
@@ -45,7 +46,7 @@ categories_as_tabs:
   it:
   science:
   files:
-  social media:
+  # social media:
 engines:
   # General
   - name: "brave"
@@ -127,17 +128,17 @@ engines:
   - name: "nyaa"
     disabled: false
   # Social media
-  - name: "lemmy communities"
-    disabled: true
-  - name: "lemmy users"
-    disabled: true
-  - name: "mastodon hashtags"
-    disabled: true
-  - name: "mastodon users"
-    disabled: true
-  - name: "reddit"
-    disabled: false
-    weight: 10
-  - name: "tootfinder"
-    disabled: true
+  # - name: "lemmy communities"
+  #   disabled: true
+  # - name: "lemmy users"
+  #   disabled: true
+  # - name: "mastodon hashtags"
+  #   disabled: true
+  # - name: "mastodon users"
+  #   disabled: true
+  # - name: "reddit"
+  #   disabled: false
+  #   weight: 10
+  # - name: "tootfinder"
+  #   disabled: true
 
