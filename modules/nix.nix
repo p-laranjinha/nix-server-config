@@ -2,6 +2,7 @@
   inputs,
   pkgs,
   this,
+  config,
   ...
 }: {
   networking.hostName = this.hostname;
@@ -14,10 +15,20 @@
     isNormalUser = true;
     description = this.fullname;
     extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
-    hashedPassword = "$y$j9T$cp4nR3fKfJGJhhm.SqsIb/$nQo/Jh/PtNDo5ZX0UUlLXMMlK31VTa1tZcmuJWhOx75";
+    hashedPasswordFile = config.secrets.password.path;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOIZeqsx4YGlynKAgAW/kFvcdb3Ec4ES+b+j8eZuQ6l2 pebble@orange"
     ];
+  };
+  secrets.password = {
+    sopsFile = ../secrets/password;
+    format = "binary";
+    # Entire file.
+    key = "";
+    # Only the user can read and nothing else.
+    mode = "0400";
+    owner = this.username;
+    neededForUsers = true;
   };
 
   security.sudo.extraConfig = ''
