@@ -10,7 +10,7 @@
         devices = {
           "phone".id = "R2RNYGN-BZPUWLZ-6OEOT77-ALGBSJP-MD2JPBY-AOY2T72-UX25SEB-H47LVAO";
           "tablet".id = "XR6AZSI-APGKKIB-LWMMCKW-6E63TBX-KFBSLVG-7JYURKQ-TZNGESZ-IVNNDQ5";
-          "desktop".id = "SHD6TV6-OO7AOMT-GHU2YL4-HXTS2VR-AYCKKX6-JAK7LCF-2NWM47E-MHR7GAS";
+          "desktop".id = "PFHNH6B-ZKMGLU4-BK2RU52-RIKVISP-EXI5N6U-4SLLJU2-D4Q2NPF-LXSDMAC";
         };
         folders = {
           "default" = {
