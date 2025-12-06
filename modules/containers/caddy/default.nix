@@ -1,27 +1,20 @@
 {
-  this,
-  config,
+  vars,
+  funcs,
   ...
 }: let
-  vars =
-    config.vars.containers.caddy
-    // {
-      dataDir = config.vars.containerDataDir;
-      rootCapabilities = config.vars.rootCapabilities;
-    };
-  funcs = config.funcs.containers;
-  caddy-config = config.lib.meta.relativeToAbsoluteConfigPath ./config;
+  caddy-config = funcs.relativeToAbsoluteConfigPath ./config;
   # Directory to serve static files from.
-  caddy-site = config.lib.meta.relativeToAbsoluteConfigPath ./site;
-  caddy-data = "${vars.dataDir}/caddy/data";
-  caddy-data-config = "${vars.dataDir}/caddy/config";
+  caddy-site = funcs.relativeToAbsoluteConfigPath ./site;
+  caddy-data = "${vars.containers.dataDir}/caddy/data";
+  caddy-data-config = "${vars.containers.dataDir}/caddy/config";
 in {
   systemd.tmpfiles.rules = [
-    "d ${caddy-config} 2770 ${this.username} ${vars.mainGroup} - -"
-    "d ${caddy-site} 2770 ${this.username} ${vars.mainGroup} - -"
-    "d ${vars.dataDir}/caddy 2770 ${this.username} ${vars.mainGroup} - -"
-    "d ${caddy-data} 2770 ${this.username} ${vars.mainGroup} - -"
-    "d ${caddy-data-config} 2770 ${this.username} ${vars.mainGroup} - -"
+    "d ${caddy-config} 2770 ${vars.username} ${vars.containers.containers.caddy.mainGroup} - -"
+    "d ${caddy-site} 2770 ${vars.username} ${vars.containers.containers.caddy.mainGroup} - -"
+    "d ${vars.containers.dataDir}/caddy 2770 ${vars.username} ${vars.containers.containers.caddy.mainGroup} - -"
+    "d ${caddy-data} 2770 ${vars.username} ${vars.containers.containers.caddy.mainGroup} - -"
+    "d ${caddy-data-config} 2770 ${vars.username} ${vars.containers.containers.caddy.mainGroup} - -"
   ];
   # Allow non-root users to bind to privileged ports like 80.
   boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
@@ -47,16 +40,16 @@ in {
             ];
             networks = ["searxng" "homepage"];
             # Doesn't have a normal user.
-            user = funcs.mkUser "root" vars.mainGroup;
+            user = funcs.containers.mkUser "root" vars.containers.containers.caddy.mainGroup;
             # dropCapabilities = vars.rootCapabilities;
-            uidMaps = funcs.mkUidMaps vars.n;
+            uidMaps = funcs.containers.mkUidMaps vars.containers.containers.caddy.n;
             gidMaps =
-              funcs.mkGidMaps
-              vars.n
-              ([vars.mainGroup] ++ vars.groups);
+              funcs.containers.mkGidMaps
+              vars.containers.containers.caddy.n
+              ([vars.containers.containers.caddy.mainGroup] ++ vars.containers.containers.caddy.groups);
             addGroups =
-              funcs.mkAddGroups
-              vars.groups;
+              funcs.containers.mkAddGroups
+              vars.containers.containers.caddy.groups;
           };
         };
       };

@@ -1,17 +1,15 @@
 {
-  this,
-  config,
+  vars,
+  funcs,
   ...
 }: let
-  vars = config.vars.containers.homepage;
-  funcs = config.funcs.containers;
-  homepage-config = config.lib.meta.relativeToAbsoluteConfigPath ./config;
+  homepage-config = funcs.relativeToAbsoluteConfigPath ./config;
 in {
   systemd.tmpfiles.rules = [
-    "d ${homepage-config} 2770 ${this.username} ${vars.mainGroup} - -"
+    "d ${homepage-config} 2770 ${vars.username} ${vars.containers.containers.homepage.mainGroup} - -"
   ];
   # Required to run homepage in rootless mode and it being able to read containers.
-  users.users.${this.username}.extraGroups = ["podman"];
+  users.users.${vars.username}.extraGroups = ["podman"];
   networking.firewall.allowedTCPPorts = [3000];
   hm = {
     virtualisation.quadlet = {
@@ -30,15 +28,15 @@ in {
               # "/run/user/1000/podman/podman.sock:/var/run/podman.sock"
             ];
             networks = ["homepage"];
-            user = funcs.mkUser "node" vars.mainGroup;
-            uidMaps = funcs.mkUidMaps vars.n;
+            user = funcs.containers.mkUser "node" vars.containers.containers.homepage.mainGroup;
+            uidMaps = funcs.containers.mkUidMaps vars.containers.containers.homepage.n;
             gidMaps =
-              funcs.mkGidMaps
-              vars.n
-              ([vars.mainGroup] ++ vars.groups);
+              funcs.containers.mkGidMaps
+              vars.containers.containers.homepage.n
+              ([vars.containers.containers.homepage.mainGroup] ++ vars.containers.containers.homepage.groups);
             addGroups =
-              funcs.mkAddGroups
-              vars.groups;
+              funcs.containers.mkAddGroups
+              vars.containers.containers.homepage.groups;
           };
         };
       };

@@ -1,7 +1,7 @@
 {
   pkgs,
-  config,
-  this,
+  vars,
+  funcs,
   ...
 }: {
   hm = {
@@ -13,11 +13,11 @@
 
       # "nix rebuild"
       # Runs a script that rebuilds this flake.
-      nixr = toString (config.lib.meta.mkMutableConfigSymlink ./nixr.sh);
-      nixs = toString (config.lib.meta.mkMutableConfigSymlink ./nixs.sh);
-      nixb = "sudo nixos-rebuild build --flake ${this.configDirectory}";
+      nixr = toString (funcs.mkMutableConfigSymlink ./nixr.sh);
+      nixs = toString (funcs.mkMutableConfigSymlink ./nixs.sh);
+      nixb = "sudo nixos-rebuild build --flake ${vars.configDirectory}";
       nixl = "nixos-rebuild list-generations";
-      nixu = "nix flake update --flake ${this.configDirectory}";
+      nixu = "nix flake update --flake ${vars.configDirectory}";
 
       # "nix query"
       # Runs nix repl initialized with values from this flake for easier testing and debugging.
@@ -27,7 +27,9 @@
           in rec {
             inherit self;
             inherit (self) inputs lib;
-            inherit (self.nixosConfigurations.${this.hostname}._module.specialArgs) this;
+            inherit (self.nixosConfigurations) ${vars.hostname};
+            inherit (self.nixosConfigurations.${vars.hostname}._module.args) vars;
+            inherit (self.nixosConfigurations.${vars.hostname}._module.args) funcs;
           }
         ''}'';
     };

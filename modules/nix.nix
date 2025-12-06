@@ -1,11 +1,10 @@
 {
   inputs,
-  pkgs,
-  this,
   config,
+  vars,
   ...
 }: {
-  networking.hostName = this.hostname;
+  networking.hostName = vars.hostname;
   # Obtained via `head -c 8 /etc/machine-id`, might require manually mounting
   #  /home on first boot.
   networking.hostId = "59718dc4";
@@ -13,7 +12,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.pebble = {
     isNormalUser = true;
-    description = this.fullname;
+    description = vars.fullname;
     extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
     hashedPasswordFile = config.secrets.password.path;
     openssh.authorizedKeys.keys = [
@@ -21,13 +20,13 @@
     ];
   };
   secrets.password = {
-    sopsFile = ../secrets/password;
+    sopsFile = "${vars.secretsDirectory}/password";
     format = "binary";
     # Entire file.
     key = "";
     # Only the user can read and nothing else.
     mode = "0400";
-    owner = this.username;
+    owner = vars.username;
     neededForUsers = true;
   };
 
@@ -73,5 +72,5 @@
 
   services.tailscale.enable = true;
 
-  system.stateVersion = this.stateVersion;
+  system.stateVersion = vars.stateVersion;
 }

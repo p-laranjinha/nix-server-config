@@ -34,8 +34,8 @@
 {
   inputs,
   pkgs,
-  this,
   lib,
+  vars,
   ...
 }: {
   imports = [
@@ -54,7 +54,7 @@
   # To decrypt a file run: `sops decrypt -i <file>`.
   # The default key sops tries to get is the file name.
   sops = {
-    age.keyFile = "${this.homeDirectory}/.config/sops/age/keys.txt";
+    age.keyFile = "${vars.homeDirectory}/.config/sops/age/keys.txt";
 
     # Not automatically adding secrets because I don't see the point yet, but
     #  leaving this here.

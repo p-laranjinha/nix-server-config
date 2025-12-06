@@ -1,6 +1,6 @@
 {
   pkgs,
-  config,
+  funcs,
   ...
 }: {
   hm = {
@@ -15,7 +15,7 @@
       xclip # Clipboard provider for X11/RDP
       nodejs_24 # For the bash LSP.
     ];
-    home.file.".config/nvim".source = config.lib.meta.mkMutableConfigSymlink ./config;
+    home.file.".config/nvim".source = funcs.mkMutableConfigSymlink ./config;
     home.shellAliases = {
       vi = "nvim";
       vim = "nvim";

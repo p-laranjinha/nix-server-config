@@ -1,119 +1,35 @@
 {
   inputs,
-  this,
   lib,
-  config,
+  vars,
+  funcs,
   ...
-}: let
-  mkVars = lib.mapAttrs (_: v:
-    if (lib.typeOf v) == "set"
-    then mkVars v
-    else lib.mkOption {default = v;});
-  mkGroups = groups:
-    lib.listToAttrs (lib.genList (i: {
-      name = lib.elemAt groups i;
-      value = {
-        gid = startGid + i;
-        members = [this.username];
-      };
-    }) (lib.length groups));
-
-  # '+ 100000' so that these mapped gids don't conflict with the others.
-  getContainerGid = group: toString (config.users.groups.${group}.gid + 100000);
-
-  # How many uids and gids the containers will have allocated to them.
-  # Will map from 0-1999. More than enough for most containers.
-  uidGidCount = 2000;
-  # The groups defined in 'groups' start with this gid.
-  startGid = 1001;
-  groups = [
-    "searxng"
-    "searxng-valkey"
-    "homepage"
-    "caddy"
-    # "public" # For everything that may be exposed to the internet.
-  ];
-in {
-  options = mkVars {
-    vars = {
-      # Defining these here so there is less of a risk of overlapping.
-      # 'n' is used to define what subuid and subgids each container uses.
-      # 'mainGroup' is used to define the container's primary group, and what
-      #   owner group the volumes should have. Volumes may have a different group
-      #   owner if they're also going to be used by other containers, like 'public'.
-      # 'groups' are the additional groups the container's user belongs to, so
-      #   the container is able to access shared volumes.
-      containers = {
-        searxng = {
-          n = 0;
-          mainGroup = "searxng";
-          groups = [];
-        };
-        searxng-valkey = {
-          n = 1;
-          mainGroup = "searxng-valkey";
-          groups = [];
-        };
-        homepage = {
-          n = 2;
-          mainGroup = "homepage";
-          groups = [];
-        };
-        caddy = {
-          n = 3;
-          mainGroup = "caddy";
-          groups = [];
-        };
-      };
-      containerDataDir = "${this.homeDirectory}/container-data";
-      rootCapabilities = ["CHOWN" "DAC_OVERRIDE" "FOWNER" "FSETID" "KILL" "NET_BIND_SERVICE" "SETFCAP" "SETGID" "SETPCAP" "SETUID" "SYS_CHROOT"];
-    };
-    funcs = {
-      containers = {
-        mkUidMaps = n: ["0:${toString (1 + uidGidCount * n)}:${toString uidGidCount}"];
-        # Gives me space for 1000 custom groups. Very overkill
-        # I tried using 'lib.length groups' for automatic expansion but it
-        #  caused problems when adding groups.
-        mkGidMaps = n: gs:
-          [
-            "0:${toString (1 + 1000 + uidGidCount * n)}:${toString uidGidCount}"
-          ]
-          ++ (map (g: "${getContainerGid g}:${toString (config.users.groups.${g}.gid - startGid + 1)}:1") gs);
-        mkAddGroups = map (g: "${getContainerGid g}");
-        mkUser = user: group: "${user}:${getContainerGid group}";
-      };
-    };
-  };
-
+}: {
   imports =
     [inputs.quadlet-nix.nixosModules.quadlet]
     ++ lib.attrValues (lib.modulesIn ./.);
 
-  config = {
-    systemd.tmpfiles.rules = [
-      "d ${config.vars.containerDataDir} 6770 ${this.username} users - -"
-    ];
+  systemd.tmpfiles.rules = ["d ${vars.containers.dataDir} 6770 ${vars.username} users - -"];
 
-    # Enable podman & podman systemd generator.
-    virtualisation.quadlet.enable = true;
-    users.users.${this.username} = {
-      # Required for auto start before user login.
-      linger = true;
-      # Required for rootless container with multiple users.
-      autoSubUidGidRange = true;
-      subGidRanges = [
-        {
-          count = lib.length groups;
-          inherit startGid;
-        }
-      ];
-    };
-    users.groups = mkGroups groups;
-    hm = {
-      imports = [inputs.quadlet-nix.homeManagerModules.quadlet];
-      virtualisation.quadlet = {
-        autoEscape = true; # Will be default in the future.
-      };
+  # Enable podman & podman systemd generator.
+  virtualisation.quadlet.enable = true;
+  users.users.${vars.username} = {
+    # Required for auto start before user login.
+    linger = true;
+    # Required for rootless container with multiple users.
+    autoSubUidGidRange = true;
+    subGidRanges = [
+      {
+        count = lib.length vars.containers.groups;
+        inherit (vars.containers) startGid;
+      }
+    ];
+  };
+  users.groups = funcs.containers.mkGroups vars.containers.groups;
+  hm = {
+    imports = [inputs.quadlet-nix.homeManagerModules.quadlet];
+    virtualisation.quadlet = {
+      autoEscape = true; # Will be default in the future.
     };
   };
 }

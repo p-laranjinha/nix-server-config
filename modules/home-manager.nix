@@ -1,12 +1,12 @@
 {
   inputs,
   lib,
-  this,
+  vars,
   ...
 }: {
   imports = [
     inputs.home-manager.nixosModules.default
-    (lib.mkAliasOptionModule ["hm"] ["home-manager" "users" this.username])
+    (lib.mkAliasOptionModule ["hm"] ["home-manager" "users" vars.username])
   ];
 
   home-manager = {
@@ -22,9 +22,9 @@
 
   hm = {
     home = {
-      username = this.username;
-      homeDirectory = this.homeDirectory;
-      stateVersion = this.stateVersion;
+      username = vars.username;
+      homeDirectory = vars.homeDirectory;
+      stateVersion = vars.stateVersion;
     };
 
     # Nicely reload system units when changing configs.

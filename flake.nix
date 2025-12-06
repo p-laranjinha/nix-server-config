@@ -25,28 +25,22 @@
   } @ inputs: let
     # Common information about the system that may be used in multiple locations.
     # Using camelCase because that is the standard for options. kebab-case is for packages and files.
-    this = {
-      hostname = "server";
-      username = "pebble";
-      fullname = "Orange Pebble";
-      homeDirectory = "/home/pebble";
-      configDirectory = "${this.homeDirectory}/nix-server-config";
-      hostPlatform = "x86_64-linux";
-      # Research properly before changing this.
-      stateVersion = "25.05";
-    };
-
-    lib = (nixpkgs.lib.extend (_: _: home-manager.lib)).extend (import ./lib);
+    vars = import ./lib/vars;
+    lib = (nixpkgs.lib.extend (_: _: home-manager.lib)).extend (import ./lib/lib);
   in {
     inherit lib;
-    nixosConfigurations.${this.hostname} = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.${vars.hostname} = nixpkgs.lib.nixosSystem {
       inherit lib;
+      system = vars.hostPlatform;
       modules =
         (lib.attrValues (lib.modulesIn ./modules))
-        ++ [];
+        ++ [
+          ./lib/funcs
+          ./lib/opts
+        ];
       specialArgs = {
         inherit inputs;
-        inherit this;
+        inherit vars;
       };
     };
   };

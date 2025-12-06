@@ -1,21 +1,18 @@
 {
-  this,
   config,
+  vars,
+  funcs,
   ...
 }: let
-  vars =
-    config.vars.containers
-    // {dataDir = config.vars.containerDataDir;};
-  funcs = config.funcs.containers;
-  searxng-config = config.lib.meta.relativeToAbsoluteConfigPath ./config;
-  searxng-data = "${vars.dataDir}/searxng/data";
-  valkey-data = "${vars.dataDir}/searxng/valkey-data";
+  searxng-config = funcs.relativeToAbsoluteConfigPath ./config;
+  searxng-data = "${vars.containers.dataDir}/searxng/data";
+  valkey-data = "${vars.containers.dataDir}/searxng/valkey-data";
 in {
   systemd.tmpfiles.rules = [
-    "d ${searxng-config} 2770 ${this.username} ${vars.searxng.mainGroup} - -"
-    "d ${vars.dataDir}/searxng 2770 ${this.username} ${vars.searxng.mainGroup} - -"
-    "d ${searxng-data} 2770 ${this.username} ${vars.searxng.mainGroup} - -"
-    "d ${valkey-data} 2770 ${this.username} ${vars.searxng-valkey.mainGroup} - -"
+    "d ${searxng-config} 2770 ${vars.username} ${vars.containers.containers.searxng.mainGroup} - -"
+    "d ${vars.containers.dataDir}/searxng 2770 ${vars.username} ${vars.containers.containers.searxng.mainGroup} - -"
+    "d ${searxng-data} 2770 ${vars.username} ${vars.containers.containers.searxng.mainGroup} - -"
+    "d ${valkey-data} 2770 ${vars.username} ${vars.containers.containers.searxng-valkey.mainGroup} - -"
   ];
   secrets.searxng = {
     sopsFile = ./secrets.env;
@@ -24,7 +21,7 @@ in {
     key = "";
     # Only the user can read and nothing else.
     mode = "0400";
-    owner = this.username;
+    owner = vars.username;
   };
   networking.firewall.allowedTCPPorts = [8080];
   hm = {
@@ -49,17 +46,17 @@ in {
               "${searxng-data}:/var/cache/searxng"
             ];
             networks = ["searxng-internal" "searxng"];
-            user = funcs.mkUser "searxng" vars.searxng.mainGroup;
+            user = funcs.containers.mkUser "searxng" vars.containers.containers.searxng.mainGroup;
             uidMaps =
-              funcs.mkUidMaps
-              vars.searxng.n;
+              funcs.containers.mkUidMaps
+              vars.containers.containers.searxng.n;
             gidMaps =
-              funcs.mkGidMaps
-              vars.searxng.n
-              ([vars.searxng.mainGroup] ++ vars.searxng.groups);
+              funcs.containers.mkGidMaps
+              vars.containers.containers.searxng.n
+              ([vars.containers.containers.searxng.mainGroup] ++ vars.containers.containers.searxng.groups);
             addGroups =
-              funcs.mkAddGroups
-              vars.searxng.groups;
+              funcs.containers.mkAddGroups
+              vars.containers.containers.searxng.groups;
           };
         };
         searxng-valkey = {
@@ -74,17 +71,17 @@ in {
             volumes = ["${valkey-data}:/data"];
             networkAliases = ["valkey"];
             networks = ["searxng-internal"];
-            user = funcs.mkUser "valkey" vars.searxng-valkey.mainGroup;
+            user = funcs.containers.mkUser "valkey" vars.containers.containers.searxng-valkey.mainGroup;
             uidMaps =
-              funcs.mkUidMaps
-              vars.searxng-valkey.n;
+              funcs.containers.mkUidMaps
+              vars.containers.containers.searxng-valkey.n;
             gidMaps =
-              funcs.mkGidMaps
-              vars.searxng-valkey.n
-              ([vars.searxng-valkey.mainGroup] ++ vars.searxng-valkey.groups);
+              funcs.containers.mkGidMaps
+              vars.containers.containers.searxng-valkey.n
+              ([vars.containers.containers.searxng-valkey.mainGroup] ++ vars.containers.containers.searxng-valkey.groups);
             addGroups =
-              funcs.mkAddGroups
-              vars.searxng-valkey.groups;
+              funcs.containers.mkAddGroups
+              vars.containers.containers.searxng-valkey.groups;
           };
         };
         # https://github.com/searx/searx/discussions/1723#discussioncomment-832494

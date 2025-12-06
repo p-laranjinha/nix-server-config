@@ -16,7 +16,6 @@ search:
 server:
   bind_address : "0.0.0.0"
   # secret_key: ""
-  base_url: http://0.0.0.0:8080/search
   image_proxy: true
   limiter: true
   method: "GET"
