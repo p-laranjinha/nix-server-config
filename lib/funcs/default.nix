@@ -8,6 +8,10 @@
   ...
 }:
 with lib; {
+  # Using this options instead of '_module.args' directly because I can't set
+  #  'funcs' im multiple places at once without an error otherwise (it wants
+  #  arguments to be set only once. NixOS options merge all the different
+  #  values set before acting on them.
   options.opts.funcs = mkOption {
     default = {};
     type = with types; attrsOf anything;
