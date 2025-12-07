@@ -96,7 +96,8 @@
   ];
 
   # https://gist.github.com/lesserfish/8c0cfc6bb07c17c5af8a3759d2eb9e9a
-  # This rollbacks
+  # This rollbacks / on every boot to cause impermanence.
+  # Sub-directories like '/home' defined above aren't affected by this.
   boot.initrd.postDeviceCommands = lib.mkAfter ''
     zfs rollback -r zroot/root@blank
   '';
