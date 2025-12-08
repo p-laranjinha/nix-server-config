@@ -36,6 +36,9 @@ vars: {
         mainGroup = "pihole";
         groups = [];
       };
+      # ISSUE: Add a secondary DNS to the router when messing with containers
+      #  as if pihole is down as the only DNS, there is no internet.
+
       # caddy = {
       #   n = 3;
       #   mainGroup = "caddy";

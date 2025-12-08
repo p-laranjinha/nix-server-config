@@ -3,10 +3,11 @@
   funcs,
   ...
 }: let
-  homepage-config = funcs.relativeToAbsoluteConfigPath ./config;
+  localVars = vars.containers.containers.homepage;
+  homepageConfigDir = funcs.relativeToAbsoluteConfigPath ./config;
 in {
   systemd.tmpfiles.rules = [
-    "d ${homepage-config} 2770 ${vars.username} ${vars.containers.containers.homepage.mainGroup} - -"
+    "d ${homepageConfigDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
   ];
   # Required to run homepage in rootless mode and it being able to read containers.
   users.users.${vars.username}.extraGroups = ["podman"];
@@ -24,19 +25,19 @@ in {
             image = "ghcr.io/gethomepage/homepage:latest";
             publishPorts = ["3000:3000"];
             volumes = [
-              "${homepage-config}:/app/config"
+              "${homepageConfigDir}:/app/config"
               # "/run/user/1000/podman/podman.sock:/var/run/podman.sock"
             ];
             networks = ["homepage"];
-            user = funcs.containers.mkUser "node" vars.containers.containers.homepage.mainGroup;
-            uidMaps = funcs.containers.mkUidMaps vars.containers.containers.homepage.n;
+            user = funcs.containers.mkUser "node" localVars.mainGroup;
+            uidMaps = funcs.containers.mkUidMaps localVars.n;
             gidMaps =
               funcs.containers.mkGidMaps
-              vars.containers.containers.homepage.n
-              ([vars.containers.containers.homepage.mainGroup] ++ vars.containers.containers.homepage.groups);
+              localVars.n
+              ([localVars.mainGroup] ++ localVars.groups);
             addGroups =
               funcs.containers.mkAddGroups
-              vars.containers.containers.homepage.groups;
+              localVars.groups;
           };
         };
       };
