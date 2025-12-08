@@ -5,11 +5,14 @@ vars: {
     uidGidCount = 2000;
     # The groups defined in 'groups' start with this gid.
     startGid = 1001;
+    # WARNING: When replacing a group, first remove the old one and the
+    #  containers that use it, rebuild, add the new one, then rebuild again.
     groups = [
       "searxng"
       "searxng-valkey"
       "homepage"
-      "caddy"
+      "pihole"
+      # "caddy"
       # "public" # For everything that may be exposed to the internet.
     ];
     containers = {
@@ -28,11 +31,16 @@ vars: {
         mainGroup = "homepage";
         groups = [];
       };
-      caddy = {
+      pihole = {
         n = 3;
-        mainGroup = "caddy";
+        mainGroup = "pihole";
         groups = [];
       };
+      # caddy = {
+      #   n = 3;
+      #   mainGroup = "caddy";
+      #   groups = [];
+      # };
     };
     dataDir = "${vars.homeDirectory}/container-data";
     rootCapabilities = ["CHOWN" "DAC_OVERRIDE" "FOWNER" "FSETID" "KILL" "NET_BIND_SERVICE" "SETFCAP" "SETGID" "SETPCAP" "SETUID" "SYS_CHROOT"];
