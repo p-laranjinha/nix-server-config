@@ -1,0 +1,27 @@
+# https://0xerr0r.github.io/blocky/latest/configuration
+upstreams:
+  init:
+    # Blocky starts serving DNS immediately and initialization happens in the
+    #  background. The feature requiring initialization will enable later on
+    #  (if it succeeds).
+    strategy: fast
+  groups:
+    default:
+      # Mullvad (DNS over HTTPS)
+      - https://base.dns.mullvad.net/dns-query
+      # Control D (DNS over HTTPS)
+      - https://freedns.controld.com/p2
+  strategy: strict
+
+blocking:
+  denylists:
+    default:
+      - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/domains/pro.txt
+      - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/domains/tif.txt
+  clientGroupsBlock:
+    default:
+      - default
+
+ports:
+  dns: 53
+  http: 4000

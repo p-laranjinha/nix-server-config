@@ -11,7 +11,7 @@ vars: {
       "searxng"
       "searxng-valkey"
       "homepage"
-      "pihole"
+      "blocky"
       # "caddy"
       # "public" # For everything that may be exposed to the internet.
     ];
@@ -31,9 +31,9 @@ vars: {
         mainGroup = "homepage";
         groups = [];
       };
-      pihole = {
+      blocky = {
         n = 3;
-        mainGroup = "pihole";
+        mainGroup = "blocky";
         groups = [];
       };
       # ISSUE: Add a secondary DNS to the router when messing with containers
