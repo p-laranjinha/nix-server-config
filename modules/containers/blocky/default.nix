@@ -71,17 +71,17 @@ in {
 #  affect url redirections to my server.
 # I've found some public and free DNS servers that both blocked ads/etc and
 #  seemed private:
-#   - Mullvad : https://mullvad.net/en/help/dns-over-https-and-dns-over-tls
 #   - Control D : https://controld.com/free-dns
+#   - Mullvad : https://mullvad.net/en/help/dns-over-https-and-dns-over-tls
 #   - Quad9 : https://quad9.net
 #   - AdGuard : https://adguard-dns.io/en/public-dns.html
 # Of these free DNS servers the ones I think are the most performant are (in
-#  order): Mullvad, Control D, Quad9, AdGuard.
-#  Although Control D and Quad9 can be faster than Mullvad, Mullvad is by far
-#   the most consistent. And although Quad9 can be faster than Control D,
-#   Control D is more consistent.
-#  These results are a bit weird because I think Control D is based in Canada
-#   while the other 2 are in Europe.
+#  order): Control D, Mullvad, Quad9, AdGuard.
+#  Mullvad is by far the most consistent, but Control D is faster most of the
+#   times with some rarer slow outliers, and Quad9 wildy fluctuates between
+#   being the faster or the slowest between all others.
+#  For some reason I lean towards Mullvad, even though it isn't the fastest,
+#   but I'll primarily use Control D.
 # https://www.reddit.com/r/pihole/comments/1ajunoc/whats_the_difference_between_dns_in_dhcp_server/
 #  I can set DNS servers on two different spots in my router, on the DHCP server
 #  and on the Internet section. The difference between the 2 is that those on
@@ -96,4 +96,3 @@ in {
 #  server field empty on the DHCP server, but depending on how the client (PC,
 #  phone, etc) handle primary and secondary DNS servers, the DNS server on my
 #  server may never be used.
-

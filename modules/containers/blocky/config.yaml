@@ -7,11 +7,10 @@ upstreams:
     strategy: fast
   groups:
     default:
-      # Mullvad (DNS over HTTPS)
-      - https://base.dns.mullvad.net/dns-query
       # Control D (DNS over HTTPS)
       - https://freedns.controld.com/p2
-  strategy: strict
+      # Mullvad (DNS over HTTPS)
+      - https://base.dns.mullvad.net/dns-query
 
 blocking:
   denylists:
