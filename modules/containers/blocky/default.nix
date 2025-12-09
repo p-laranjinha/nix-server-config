@@ -45,19 +45,10 @@ in {
             volumes = [
               "${blockyConfigFile}:/app/config.yml:ro"
             ];
-            user = funcs.containers.mkUser "root" localVars.mainGroup;
-            # addCapabilities = [
-            #   # Allows binding to TCP/UDP sockets below 1024.
-            #   "NET_BIND_SERVICE"
-            # ];
+            # I think the blocky container might just be a single binary, but
+            #  the image layers (I think equivalent to a compose file) sets
+            #  user to 100. I don't think it uses any group though.
             uidMaps = funcs.containers.mkUidMaps localVars.n;
-            gidMaps =
-              funcs.containers.mkGidMaps
-              localVars.n
-              ([localVars.mainGroup] ++ localVars.groups);
-            addGroups =
-              funcs.containers.mkAddGroups
-              localVars.groups;
           };
         };
       };
@@ -105,3 +96,4 @@ in {
 #  server field empty on the DHCP server, but depending on how the client (PC,
 #  phone, etc) handle primary and secondary DNS servers, the DNS server on my
 #  server may never be used.
+

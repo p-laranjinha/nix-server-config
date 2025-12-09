@@ -11,7 +11,7 @@ vars: {
       "searxng"
       "searxng-valkey"
       "homepage"
-      "blocky"
+      "blocky" # Container doesn't seem to use groups, but I'll leave it for now.
       # "caddy"
       # "public" # For everything that may be exposed to the internet.
     ];
