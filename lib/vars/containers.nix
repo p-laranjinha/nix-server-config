@@ -12,8 +12,9 @@ vars: {
       "searxng-valkey"
       "homepage"
       "blocky" # Container doesn't seem to use groups, but I'll leave it for now.
+      "public" # For everything that may be exposed to the internet.
+      "copyparty"
       # "caddy"
-      # "public" # For everything that may be exposed to the internet.
     ];
     containers = {
       searxng = {
@@ -36,6 +37,11 @@ vars: {
         mainGroup = "blocky";
         groups = [];
       };
+      copyparty = {
+        n = 4;
+        mainGroup = "copyparty";
+        groups = [];
+      };
       # ISSUE: Add a secondary DNS to the router when messing with containers
       #  as if pihole is down as the only DNS, there is no internet.
 
@@ -46,6 +52,7 @@ vars: {
       # };
     };
     dataDir = "${vars.homeDirectory}/container-data";
+    publicDir = "${vars.homeDirectory}/public";
     rootCapabilities = ["CHOWN" "DAC_OVERRIDE" "FOWNER" "FSETID" "KILL" "NET_BIND_SERVICE" "SETFCAP" "SETGID" "SETPCAP" "SETUID" "SYS_CHROOT"];
   };
 }

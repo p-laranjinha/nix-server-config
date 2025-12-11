@@ -9,7 +9,10 @@
     [inputs.quadlet-nix.nixosModules.quadlet]
     ++ lib.attrValues (lib.modulesIn ./.);
 
-  systemd.tmpfiles.rules = ["d ${vars.containers.dataDir} 6770 ${vars.username} users - -"];
+  systemd.tmpfiles.rules = [
+    "d ${vars.containers.dataDir} 2770 ${vars.username} users - -"
+    "d ${vars.containers.publicDir} 2770 ${vars.username} public - -"
+  ];
 
   # Enable podman & podman systemd generator.
   virtualisation.quadlet.enable = true;
@@ -93,4 +96,3 @@
 #  set their permissions. Using 2___ permissions, makes it so the files created
 #  in that directory inherit the group, so I can hopefully at least read the
 #  files outside the container.
-
