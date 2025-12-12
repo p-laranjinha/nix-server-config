@@ -13,42 +13,51 @@
 {
   vars,
   funcs,
+  config,
+  lib,
   ...
 }: let
   localVars = vars.containers.containers.blocky;
   blockyConfigFile = funcs.relativeToAbsoluteConfigPath ./config.yaml;
 in {
-  # Allow non-root users to bind to privileged ports like 80.
-  boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
-  networking.firewall.allowedTCPPorts = [53];
-  networking.firewall.allowedUDPPorts = [53];
-  hm = {
-    virtualisation.quadlet = {
-      containers = {
-        # https://0xerr0r.github.io/blocky/latest/
-        blocky = {
-          autoStart = true;
-          serviceConfig = {
-            RestartSec = "10";
-            Restart = "always";
-          };
-          containerConfig = {
-            image = "docker.io/spx01/blocky:latest";
-            publishPorts = [
-              "53:53/tcp"
-              "53:53/udp"
-              "4000:400/tcp"
-            ];
-            environments = {
-              TZ = "Europe/Lisbon";
+  options.opts.containers.blocky.enable = lib.mkOption {
+    default = config.opts.containers.enable;
+    type = lib.types.bool;
+  };
+
+  config = lib.mkIf config.opts.containers.blocky.enable {
+    # Allow non-root users to bind to privileged ports like 80.
+    boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
+    networking.firewall.allowedTCPPorts = [53];
+    networking.firewall.allowedUDPPorts = [53];
+    hm = {
+      virtualisation.quadlet = {
+        containers = {
+          # https://0xerr0r.github.io/blocky/latest/
+          blocky = {
+            autoStart = true;
+            serviceConfig = {
+              RestartSec = "10";
+              Restart = "always";
             };
-            volumes = [
-              "${blockyConfigFile}:/app/config.yml:ro"
-            ];
-            # I think the blocky container might just be a single binary, but
-            #  the image layers (I think equivalent to a compose file) sets
-            #  user to 100. I don't think it uses any group though.
-            uidMaps = funcs.containers.mkUidMaps localVars.n;
+            containerConfig = {
+              image = "docker.io/spx01/blocky:latest";
+              publishPorts = [
+                "53:53/tcp"
+                "53:53/udp"
+                "4000:400/tcp"
+              ];
+              environments = {
+                TZ = "Europe/Lisbon";
+              };
+              volumes = [
+                "${blockyConfigFile}:/app/config.yml:ro"
+              ];
+              # I think the blocky container might just be a single binary, but
+              #  the image layers (I think equivalent to a compose file) sets
+              #  user to 100. I don't think it uses any group though.
+              uidMaps = funcs.containers.mkUidMaps localVars.n;
+            };
           };
         };
       };
@@ -96,3 +105,4 @@ in {
 #  server field empty on the DHCP server, but depending on how the client (PC,
 #  phone, etc) handle primary and secondary DNS servers, the DNS server on my
 #  server may never be used.
+

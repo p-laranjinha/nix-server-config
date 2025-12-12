@@ -1,45 +1,62 @@
 {
   vars,
   funcs,
+  lib,
+  config,
   ...
 }: let
   localVars = vars.containers.containers.copyparty;
+  # Making a new config directory separate from /cfg, because other things
+  #  are stored in /cfg that I don't want in the repo.
   copypartyConfigDir = funcs.relativeToAbsoluteConfigPath ./config;
+  copypartyCfgDir = "${vars.containers.dataDir}/copyparty/cfg";
   copypartyHistsDir = "${vars.containers.dataDir}/copyparty/hists";
 in {
-  systemd.tmpfiles.rules = [
-    "d ${copypartyConfigDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
-    "d ${vars.containers.dataDir}/copyparty 2770 ${vars.username} ${localVars.mainGroup} - -"
-    "d ${copypartyHistsDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
-  ];
-  hm = {
-    virtualisation.quadlet = {
-      containers = {
-        copyparty = {
-          autoStart = true;
-          serviceConfig = {
-            RestartSec = "10";
-            Restart = "always";
-          };
-          containerConfig = {
-            image = "docker.io/copyparty/ac:latest";
-            publishPorts = [
-              "3923:3923"
-            ];
-            volumes = [
-              "${copypartyConfigDir}:/cfg"
-              "${vars.containers.publicDir}:/w"
-              "${copypartyHistsDir}:/hists"
-            ];
-            user = funcs.containers.mkUser "1000" localVars.mainGroup;
-            uidMaps = funcs.containers.mkUidMaps localVars.n;
-            gidMaps =
-              funcs.containers.mkGidMaps
-              localVars.n
-              ([localVars.mainGroup] ++ localVars.groups);
-            addGroups =
-              funcs.containers.mkAddGroups
-              localVars.groups;
+  options.opts.containers.copyparty.enable = lib.mkOption {
+    default = config.opts.containers.enable;
+    type = lib.types.bool;
+  };
+
+  config = lib.mkIf config.opts.containers.copyparty.enable {
+    systemd.tmpfiles.rules = [
+      "d ${copypartyConfigDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
+      "d ${vars.containers.dataDir}/copyparty 2770 ${vars.username} ${localVars.mainGroup} - -"
+      "d ${copypartyCfgDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
+      "d ${copypartyHistsDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
+    ];
+    hm = {
+      virtualisation.quadlet = {
+        containers = {
+          copyparty = {
+            autoStart = true;
+            serviceConfig = {
+              RestartSec = "10";
+              Restart = "always";
+            };
+            containerConfig = {
+              image = "docker.io/copyparty/ac:latest";
+              # Modified the entry pointfound here:
+              #  https://github.com/9001/copyparty/blob/hovudstraum/scripts/docker/Dockerfile.ac
+              exec = "-c /z/initcfg -c /copyparty-config";
+              publishPorts = [
+                "3923:3923"
+              ];
+              volumes = [
+                "${vars.containers.publicDir}:/w"
+                "${copypartyConfigDir}:/copyparty-config"
+                "${copypartyCfgDir}:/cfg"
+                "${copypartyHistsDir}:/hists"
+              ];
+              user = funcs.containers.mkUser "1000" localVars.mainGroup;
+              uidMaps = funcs.containers.mkUidMaps localVars.n;
+              gidMaps =
+                funcs.containers.mkGidMaps
+                localVars.n
+                ([localVars.mainGroup] ++ localVars.groups);
+              addGroups =
+                funcs.containers.mkAddGroups
+                localVars.groups;
+            };
           };
         };
       };

@@ -40,7 +40,7 @@ vars: {
       copyparty = {
         n = 4;
         mainGroup = "copyparty";
-        groups = [];
+        groups = ["public"];
       };
       # ISSUE: Add a secondary DNS to the router when messing with containers
       #  as if pihole is down as the only DNS, there is no internet.

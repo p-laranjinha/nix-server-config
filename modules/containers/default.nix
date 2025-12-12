@@ -3,36 +3,50 @@
   lib,
   vars,
   funcs,
+  config,
   ...
 }: {
+  # Easy way to disable all the container related things, because when I'm
+  #  adding and experimenting with containers it's nice to have a way to reset
+  #  to a clean slate.
+  options.opts.containers.enable = lib.mkOption {
+    default = true;
+    type = lib.types.bool;
+  };
+
   imports =
     [inputs.quadlet-nix.nixosModules.quadlet]
     ++ lib.attrValues (lib.modulesIn ./.);
 
-  systemd.tmpfiles.rules = [
-    "d ${vars.containers.dataDir} 2770 ${vars.username} users - -"
-    "d ${vars.containers.publicDir} 2770 ${vars.username} public - -"
-  ];
+  config = lib.mkIf config.opts.containers.enable {
+    opts.containers.caddy.enable = false;
+    opts.containers.copyparty.enable = true;
 
-  # Enable podman & podman systemd generator.
-  virtualisation.quadlet.enable = true;
-  users.users.${vars.username} = {
-    # Required for auto start before user login.
-    linger = true;
-    # Required for rootless container with multiple users.
-    autoSubUidGidRange = true;
-    subGidRanges = [
-      {
-        count = lib.length vars.containers.groups;
-        inherit (vars.containers) startGid;
-      }
+    systemd.tmpfiles.rules = [
+      "d ${vars.containers.dataDir} 2770 ${vars.username} users - -"
+      "d ${vars.containers.publicDir} 2770 ${vars.username} public - -"
     ];
-  };
-  users.groups = funcs.containers.mkGroups vars.containers.groups;
-  hm = {
-    imports = [inputs.quadlet-nix.homeManagerModules.quadlet];
-    virtualisation.quadlet = {
-      autoEscape = true; # Will be default in the future.
+
+    # Enable podman & podman systemd generator.
+    virtualisation.quadlet.enable = true;
+    users.users.${vars.username} = {
+      # Required for auto start before user login.
+      linger = true;
+      # Required for rootless container with multiple users.
+      autoSubUidGidRange = true;
+      subGidRanges = [
+        {
+          count = lib.length vars.containers.groups;
+          inherit (vars.containers) startGid;
+        }
+      ];
+    };
+    users.groups = funcs.containers.mkGroups vars.containers.groups;
+    hm = {
+      imports = [inputs.quadlet-nix.homeManagerModules.quadlet];
+      virtualisation.quadlet = {
+        autoEscape = true; # Will be default in the future.
+      };
     };
   };
 }
@@ -96,3 +110,4 @@
 #  set their permissions. Using 2___ permissions, makes it so the files created
 #  in that directory inherit the group, so I can hopefully at least read the
 #  files outside the container.
+
