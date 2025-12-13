@@ -5,16 +5,21 @@ vars: {
     uidGidCount = 2000;
     # The groups defined in 'groups' start with this gid.
     startGid = 1001;
-    # WARNING: When replacing a group, first remove the old one and the
-    #  containers that use it, rebuild, add the new one, then rebuild again.
+    # Not all containers need special groups because they don't use volumes,
+    #  but I'll add them just in case.
     groups = [
       "searxng"
       "searxng-valkey"
       "homepage"
-      "blocky" # Container doesn't seem to use groups, but I'll leave it for now.
+      "blocky"
       "public" # For everything that may be exposed to the internet.
       "copyparty"
-      # "caddy"
+      "immich-server"
+      "immich-machine-learning"
+      "immich-redis"
+      "immich-database"
+      # WARNING: When replacing a group, first remove the old one and the
+      #  containers that use it, rebuild, add the new one, then rebuild again.
     ];
     containers = {
       searxng = {
@@ -42,14 +47,28 @@ vars: {
         mainGroup = "copyparty";
         groups = ["public"];
       };
+      immich-server = {
+        n = 5;
+        mainGroup = "immich-server";
+        groups = ["public"];
+      };
+      immich-machine-learning = {
+        n = 6;
+        mainGroup = "immich-machine-learning";
+        groups = [];
+      };
+      immich-redis = {
+        n = 7;
+        mainGroup = "immich-redis";
+        groups = [];
+      };
+      immich-database = {
+        n = 8;
+        mainGroup = "immich-database";
+        groups = [];
+      };
       # ISSUE: Add a secondary DNS to the router when messing with containers
       #  as if pihole is down as the only DNS, there is no internet.
-
-      # caddy = {
-      #   n = 3;
-      #   mainGroup = "caddy";
-      #   groups = [];
-      # };
     };
     dataDir = "${vars.homeDirectory}/container-data";
     publicDir = "${vars.homeDirectory}/public";

@@ -42,6 +42,9 @@ in {
               RestartSec = "10";
               Restart = "always";
             };
+            unitConfig = {
+              Requires = "searxng-valkey.container";
+            };
             containerConfig = {
               image = "docker.io/searxng/searxng:latest";
               publishPorts = ["8080:8080"];
