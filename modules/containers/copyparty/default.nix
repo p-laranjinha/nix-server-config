@@ -6,6 +6,9 @@
   ...
 }: let
   localVars = vars.containers.containers.copyparty;
+
+  copypartyImage = "ghcr.io/9001/copyparty-ac:1.19.21@sha256:b1f8be53f068ad37f583cfd93b6a3611472ee8c30e98177389629631a4b6b4ca";
+
   # Making a new config directory separate from /cfg, because other things
   #  are stored in /cfg that I don't want in the repo.
   copypartyConfigDir = funcs.relativeToAbsoluteConfigPath ./config;
@@ -34,7 +37,7 @@ in {
               Restart = "always";
             };
             containerConfig = {
-              image = "docker.io/copyparty/ac:latest";
+              image = copypartyImage;
               # Modified the entry pointfound here:
               #  https://github.com/9001/copyparty/blob/hovudstraum/scripts/docker/Dockerfile.ac
               exec = "-c /z/initcfg -c /copyparty-config";

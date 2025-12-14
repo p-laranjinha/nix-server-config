@@ -20,7 +20,11 @@
 
   config = lib.mkIf config.opts.containers.enable {
     opts.containers.caddy.enable = false;
+    opts.containers.searxng.enable = true;
+    opts.containers.homepage.enable = true;
+    opts.containers.blocky.enable = true;
     opts.containers.copyparty.enable = true;
+    opts.containers.immich.enable = true;
 
     systemd.tmpfiles.rules = [
       "d ${vars.containers.dataDir} 2770 ${vars.username} users - -"
@@ -33,8 +37,18 @@
       # Required for auto start before user login.
       linger = true;
       # Required for rootless container with multiple users.
-      autoSubUidGidRange = true;
+      # autoSubUidGidRange = true;
+      subUidRanges = [
+        {
+          count = 1000000;
+          startUid = 100000;
+        }
+      ];
       subGidRanges = [
+        {
+          count = 1000000;
+          startGid = 100000;
+        }
         {
           count = lib.length vars.containers.groups;
           inherit (vars.containers) startGid;

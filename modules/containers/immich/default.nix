@@ -13,7 +13,7 @@
   databaseImage = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
   machineLearningImage = "ghcr.io/immich-app/immich-machine-learning:v2.3.1";
 
-  immichUploadDir = "${vars.containers.publicDir}/images";
+  serverUploadDir = "${vars.containers.publicDir}/images";
   databaseDataDir = "${vars.containers.dataDir}/immich/database/data";
   machineLearningCacheDir = "${vars.containers.dataDir}/immich/machine-learning/cache";
 
@@ -31,7 +31,7 @@ in {
 
   config = lib.mkIf config.opts.containers.immich.enable {
     systemd.tmpfiles.rules = [
-      "d ${immichUploadDir} 2770 ${vars.username} public - -"
+      "d ${serverUploadDir} 2770 ${vars.username} public - -"
 
       "d ${vars.containers.dataDir}/immich 2770 ${vars.username} ${localVars.immich-server.mainGroup} - -"
 
@@ -51,6 +51,9 @@ in {
               RestartSec = "10";
               Restart = "always";
             };
+            # This makes it so that the other containers can have autoStart as
+            #  false, but even so this container will start before the ones
+            #  it depends on and fail at least once per startup.
             unitConfig = {
               Requires = "immich-redis.container immich-database.container";
               Wants = "immich-machine-learning.container";
@@ -60,7 +63,7 @@ in {
               publishPorts = ["2283:2283"];
               environments = env;
               volumes = [
-                "${immichUploadDir}:/data"
+                "${serverUploadDir}:/data"
                 "/etc/localtime:/etc/localtime:ro"
               ];
               networks = ["immich"];
@@ -76,7 +79,7 @@ in {
             };
           };
           immich-machine-learning = {
-            autoStart = true;
+            autoStart = false;
             serviceConfig = {
               RestartSec = "10";
               Restart = "always";
@@ -84,6 +87,7 @@ in {
             containerConfig = {
               image = machineLearningImage;
               volumes = [
+                "${machineLearningCacheDir}:/cache"
               ];
               networks = ["immich"];
               networkAliases = ["immich-machine-learning"];
@@ -100,7 +104,7 @@ in {
             };
           };
           immich-redis = {
-            autoStart = true;
+            autoStart = false;
             serviceConfig = {
               RestartSec = "10";
               Restart = "always";
@@ -121,7 +125,7 @@ in {
             };
           };
           immich-database = {
-            autoStart = true;
+            autoStart = false;
             serviceConfig = {
               RestartSec = "10";
               Restart = "always";
@@ -130,8 +134,8 @@ in {
               image = databaseImage;
               environments = {
                 POSTGRES_USER = env.DB_USERNAME;
-                POSTRES_PASSWORD = env.DB_PASSWORD;
-                POSGRES_DB = env.DB_DATABASE_NAME;
+                POSTGRES_PASSWORD = env.DB_PASSWORD;
+                POSTGRES_DB = env.DB_DATABASE_NAME;
                 POSTGRES_INITDB_ARGS = "--data-checksums";
                 DB_STORAGE_TYPE = "HDD";
               };

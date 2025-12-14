@@ -6,7 +6,10 @@
   ...
 }: let
   localVars = vars.containers.containers.homepage;
-  homepageConfigDir = funcs.relativeToAbsoluteConfigPath ./config;
+
+  homepageImage = "ghcr.io/gethomepage/homepage:v1.8.0@sha256:7dc099d5c6ec7fc945d858218565925b01ff8a60bcbfda990fc680a8b5cd0b6e";
+
+  configDir = funcs.relativeToAbsoluteConfigPath ./config;
 in {
   options.opts.containers.homepage.enable = lib.mkOption {
     default = config.opts.containers.enable;
@@ -15,7 +18,7 @@ in {
 
   config = lib.mkIf config.opts.containers.homepage.enable {
     systemd.tmpfiles.rules = [
-      "d ${homepageConfigDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
+      "d ${configDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
     ];
     # Required to run homepage in rootless mode and it being able to read containers.
     users.users.${vars.username}.extraGroups = ["podman"];
@@ -30,11 +33,15 @@ in {
               Restart = "always";
             };
             containerConfig = {
-              image = "ghcr.io/gethomepage/homepage:latest";
+              image = homepageImage;
               publishPorts = ["3000:3000"];
               volumes = [
-                "${homepageConfigDir}:/app/config"
-                # "/run/user/1000/podman/podman.sock:/var/run/podman.sock"
+                "${configDir}:/app/config"
+                # "/run/user/1000/podman/podman.sock:/var/run/docker.sock:ro"
+                # TODO: Give homepage access to container info, this will
+                #  probably require changing "podman.sock"'s group to something
+                #  like 'podman-sock' that we can give to homepage and maybe
+                #  other future containers.
               ];
               networks = ["homepage"];
               user = funcs.containers.mkUser "node" localVars.mainGroup;

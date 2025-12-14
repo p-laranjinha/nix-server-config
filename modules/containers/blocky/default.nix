@@ -18,6 +18,9 @@
   ...
 }: let
   localVars = vars.containers.containers.blocky;
+
+  blockyImage = "ghcr.io/0xerr0r/blocky:v0.28.2@sha256:5f84a54e4ee950c4ab21db905b7497476ece2f4e1a376d23ab8c4855cabddcba";
+
   blockyConfigFile = funcs.relativeToAbsoluteConfigPath ./config.yaml;
 in {
   options.opts.containers.blocky.enable = lib.mkOption {
@@ -41,7 +44,7 @@ in {
               Restart = "always";
             };
             containerConfig = {
-              image = "docker.io/spx01/blocky:latest";
+              image = blockyImage;
               publishPorts = [
                 "53:53/tcp"
                 "53:53/udp"

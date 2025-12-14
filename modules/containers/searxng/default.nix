@@ -6,6 +6,10 @@
   ...
 }: let
   localVars = vars.containers.containers;
+
+  searxngImage = "ghcr.io/searxng/searxng:2025.12.12-920b40253@sha256:b88ef002ab1d9a901766f9eb59779089a74e8f444477e0151fa8cd1f91a02006";
+  valkeyImage = "ghcr.io/valkey-io/valkey:9.0.1@sha256:fb8d272e529ea567b9bf1302245796f21a2672b8368ca3fcb938ac334e613c8f";
+
   searxngConfigDir = funcs.relativeToAbsoluteConfigPath ./config;
   searxngDataDir = "${vars.containers.dataDir}/searxng/data";
   valkeyDataDir = "${vars.containers.dataDir}/searxng/valkey-data";
@@ -46,7 +50,7 @@ in {
               Requires = "searxng-valkey.container";
             };
             containerConfig = {
-              image = "docker.io/searxng/searxng:latest";
+              image = searxngImage;
               publishPorts = ["8080:8080"];
               environments = {
                 FORCE_OWNERSHIP = "false";
@@ -77,7 +81,7 @@ in {
               Restart = "always";
             };
             containerConfig = {
-              image = "docker.io/valkey/valkey:latest";
+              image = valkeyImage;
               exec = "valkey-server --save 30 1 --loglevel warning";
               volumes = ["${valkeyDataDir}:/data"];
               networkAliases = ["valkey"];
