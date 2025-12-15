@@ -10,6 +10,11 @@
     # Undoes a commit but keeps the changes.
     gitr = "git reset --soft HEAD~1";
 
+    # I've been typing this so much working with the containers that I want
+    #  an easier way.
+    sysc = "systemctl";
+    syscu = "systemctl --user";
+
     # Runs a script that rebuild switches this config.
     nixs = toString (funcs.mkMutableConfigSymlink ./nixs.sh);
     # Runs a script that rebuild switches and commits this config.

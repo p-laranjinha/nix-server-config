@@ -3,28 +3,42 @@
   lib,
   vars,
   funcs,
-  config,
   ...
-}: {
+}: let
   # Easy way to disable all the container related things, because when I'm
   #  adding and experimenting with containers it's nice to have a way to reset
   #  to a clean slate.
-  options.opts.containers.enable = lib.mkOption {
-    default = true;
-    type = lib.types.bool;
-  };
+  # I've tried doing the same with the option 'opts.containers.enable' but it
+  #  didn't seem to reset properly. Especially the subgids and subuids.
+  enable = true;
+in
+  if enable
+  then {
+    imports =
+      [inputs.quadlet-nix.nixosModules.quadlet]
+      ++ lib.attrValues (lib.modulesIn ./.);
 
-  imports =
-    [inputs.quadlet-nix.nixosModules.quadlet]
-    ++ lib.attrValues (lib.modulesIn ./.);
-
-  config = lib.mkIf config.opts.containers.enable {
-    opts.containers.caddy.enable = false;
-    opts.containers.searxng.enable = true;
-    opts.containers.homepage.enable = true;
-    opts.containers.blocky.enable = true;
-    opts.containers.copyparty.enable = true;
-    opts.containers.immich.enable = true;
+    # WARN: Sometimes when rebuilding fails, to remove the container services,
+    #  the files at '~/.config/systemd/user/' and '~/.config/containers/systemd/'
+    #  have to be deleted manually.
+    #  Enabling and disabling the containers in this config also works.
+    # WARN: Additionally, rebuilding failing can also fail to remove containers
+    #  from autostart.
+    #  These can be removed manually in '~/.config/systemd/user/default.target.wants/'.
+    # ISSUE: Only enable autoStart for a container at a time, it takes too long
+    #  to start everything at once and rebuild may fail otherwise.
+    opts.containers = {
+      searxng.enable = true;
+      searxng.autoStart = true;
+      homepage.enable = true;
+      homepage.autoStart = true;
+      blocky.enable = true;
+      blocky.autoStart = true;
+      copyparty.enable = true;
+      copyparty.autoStart = true;
+      immich.enable = true;
+      immich.autoStart = true;
+    };
 
     systemd.tmpfiles.rules = [
       "d ${vars.containers.dataDir} 2770 ${vars.username} users - -"
@@ -62,8 +76,8 @@
         autoEscape = true; # Will be default in the future.
       };
     };
-  };
-}
+  }
+  else {}
 # Groups aren't deleted automatically because Nix doesn't know what files are
 #  owned by the groups.
 # So if you wan't to remove or change group order, you'll have to manually

@@ -15,9 +15,9 @@
   copypartyCfgDir = "${vars.containers.dataDir}/copyparty/cfg";
   copypartyHistsDir = "${vars.containers.dataDir}/copyparty/hists";
 in {
-  options.opts.containers.copyparty.enable = lib.mkOption {
-    default = config.opts.containers.enable;
-    type = lib.types.bool;
+  options.opts.containers.copyparty = {
+    enable = lib.mkEnableOption "copyparty";
+    autoStart = lib.mkEnableOption "copyparty auto-start";
   };
 
   config = lib.mkIf config.opts.containers.copyparty.enable {
@@ -26,12 +26,15 @@ in {
       "d ${vars.containers.dataDir}/copyparty 2770 ${vars.username} ${localVars.mainGroup} - -"
       "d ${copypartyCfgDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
       "d ${copypartyHistsDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
+
+      "Z ${copypartyConfigDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
+      "Z ${vars.containers.dataDir}/copyparty 2770 ${vars.username} ${localVars.mainGroup} - -"
     ];
     hm = {
       virtualisation.quadlet = {
         containers = {
           copyparty = {
-            autoStart = true;
+            autoStart = config.opts.containers.copyparty.autoStart;
             serviceConfig = {
               RestartSec = "10";
               Restart = "always";

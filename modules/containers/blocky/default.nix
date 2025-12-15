@@ -23,12 +23,16 @@
 
   blockyConfigFile = funcs.relativeToAbsoluteConfigPath ./config.yaml;
 in {
-  options.opts.containers.blocky.enable = lib.mkOption {
-    default = config.opts.containers.enable;
-    type = lib.types.bool;
+  options.opts.containers.blocky = {
+    enable = lib.mkEnableOption "blocky";
+    autoStart = lib.mkEnableOption "blocky auto-start";
   };
 
   config = lib.mkIf config.opts.containers.blocky.enable {
+    systemd.tmpfiles.rules = [
+      # Blocky doesn't use groups so make sure the config file is readable by anyone.
+      "z ${blockyConfigFile} 644 ${vars.username} users - -"
+    ];
     # Allow non-root users to bind to privileged ports like 80.
     boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
     networking.firewall.allowedTCPPorts = [53];
@@ -38,7 +42,7 @@ in {
         containers = {
           # https://0xerr0r.github.io/blocky/latest/
           blocky = {
-            autoStart = true;
+            autoStart = config.opts.containers.blocky.autoStart;
             serviceConfig = {
               RestartSec = "10";
               Restart = "always";

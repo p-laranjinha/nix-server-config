@@ -12,14 +12,15 @@
 
   configDir = funcs.relativeToAbsoluteConfigPath ./config;
 in {
-  options.opts.containers.homepage.enable = lib.mkOption {
-    default = config.opts.containers.enable;
-    type = lib.types.bool;
+  options.opts.containers.homepage = {
+    enable = lib.mkEnableOption "homepage";
+    autoStart = lib.mkEnableOption "homepage auto-start";
   };
 
   config = lib.mkIf config.opts.containers.homepage.enable {
     systemd.tmpfiles.rules = [
       "d ${configDir} 2770 ${vars.username} ${localVars.homepage.mainGroup} - -"
+      "Z ${configDir} 2770 ${vars.username} ${localVars.homepage.mainGroup} - -"
     ];
     # Required to run homepage in rootless mode and it being able to read containers.
     users.users.${vars.username}.extraGroups = ["podman"];
@@ -28,7 +29,7 @@ in {
       virtualisation.quadlet = {
         containers = {
           homepage = {
-            autoStart = true;
+            autoStart = config.opts.containers.homepage.autoStart;
             serviceConfig = {
               RestartSec = "10";
               Restart = "always";

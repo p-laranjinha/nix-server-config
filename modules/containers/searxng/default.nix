@@ -14,9 +14,9 @@
   searxngDataDir = "${vars.containers.dataDir}/searxng/data";
   valkeyDataDir = "${vars.containers.dataDir}/searxng/valkey-data";
 in {
-  options.opts.containers.searxng.enable = lib.mkOption {
-    default = config.opts.containers.enable;
-    type = lib.types.bool;
+  options.opts.containers.searxng = {
+    enable = lib.mkEnableOption "SearXNG";
+    autoStart = lib.mkEnableOption "SearXNG auto-start";
   };
 
   config = lib.mkIf config.opts.containers.searxng.enable {
@@ -25,6 +25,10 @@ in {
       "d ${vars.containers.dataDir}/searxng 2770 ${vars.username} ${localVars.searxng.mainGroup} - -"
       "d ${searxngDataDir} 2770 ${vars.username} ${localVars.searxng.mainGroup} - -"
       "d ${valkeyDataDir} 2770 ${vars.username} ${localVars.searxng-valkey.mainGroup} - -"
+
+      "Z ${searxngConfigDir} 2770 ${vars.username} ${localVars.searxng.mainGroup} - -"
+      "Z ${vars.containers.dataDir}/searxng 2770 ${vars.username} ${localVars.searxng.mainGroup} - -"
+      "Z ${valkeyDataDir} 2770 ${vars.username} ${localVars.searxng-valkey.mainGroup} - -"
     ];
     secrets.searxng = {
       sopsFile = ./secrets.env;
@@ -41,7 +45,7 @@ in {
       virtualisation.quadlet = {
         containers = {
           searxng = {
-            autoStart = true;
+            autoStart = config.opts.containers.searxng.autoStart;
             serviceConfig = {
               RestartSec = "10";
               Restart = "always";
@@ -60,7 +64,7 @@ in {
                 "${searxngConfigDir}:/etc/searxng"
                 "${searxngDataDir}:/var/cache/searxng"
               ];
-              networks = ["searxng-internal" "searxng"];
+              networks = ["searxng"];
               user = funcs.containers.mkUser "searxng" localVars.searxng.mainGroup;
               uidMaps =
                 funcs.containers.mkUidMaps
@@ -75,17 +79,17 @@ in {
             };
           };
           searxng-valkey = {
-            autoStart = true;
+            autoStart = false;
             serviceConfig = {
               RestartSec = "10";
               Restart = "always";
             };
             containerConfig = {
               image = valkeyImage;
-              exec = "valkey-server --save 30 1 --loglevel warning";
+              exec = "valkey-server --save 30 1";
               volumes = ["${valkeyDataDir}:/data"];
               networkAliases = ["valkey"];
-              networks = ["searxng-internal"];
+              networks = ["searxng"];
               user = funcs.containers.mkUser "valkey" localVars.searxng-valkey.mainGroup;
               uidMaps =
                 funcs.containers.mkUidMaps
@@ -99,28 +103,9 @@ in {
                 localVars.searxng-valkey.groups;
             };
           };
-          # https://github.com/searx/searx/discussions/1723#discussioncomment-832494
-          # searxng-tor = {
-          #   autoStart = true;
-          #   serviceConfig = {
-          #     RestartSec = "10";
-          #     Restart = "always";
-          #   };
-          #   containerConfig = {
-          #     image = "docker.io/osminogin/tor-simple:latest";
-          #     networkAliases = [
-          #       "tor"
-          #     ];
-          #     networks = [
-          #       "searxng"
-          #     ];
-          #     userns = "keep-id";
-          #   };
-          # };
         };
         networks = {
           searxng = {};
-          searxng-internal = {};
         };
       };
     };

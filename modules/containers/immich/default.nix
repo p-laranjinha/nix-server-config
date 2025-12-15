@@ -8,12 +8,12 @@
 }: let
   localVars = vars.containers.containers;
   # Obtained versions from the release 'docker-compose.yml'.
-  serverImage = "ghcr.io/immich-app/immich-server:v2.3.1";
-  redisImage = "docker.io/valkey/valkey:8@sha256:81db6d39e1bba3b3ff32bd3a1b19a6d69690f94a3954ec131277b9a26b95b3aa";
+  immichImage = "ghcr.io/immich-app/immich-server:v2.3.1";
+  redisImage = "ghcr.io/valkey-io/valkey:8.1.5@sha256:e6519c81133f55170dcaf1c7711dea0770dc756a7aef0cb919204c8d6e325776";
   databaseImage = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
   machineLearningImage = "ghcr.io/immich-app/immich-machine-learning:v2.3.1";
 
-  serverUploadDir = "${vars.containers.publicDir}/images";
+  immichUploadDir = "${vars.containers.publicDir}/images";
   databaseDataDir = "${vars.containers.dataDir}/immich/database/data";
   machineLearningCacheDir = "${vars.containers.dataDir}/immich/machine-learning/cache";
 
@@ -24,29 +24,34 @@
     DB_DATABASE_NAME = "immich";
   };
 in {
-  options.opts.containers.immich.enable = lib.mkOption {
-    default = config.opts.containers.enable;
-    type = lib.types.bool;
+  options.opts.containers.immich = {
+    enable = lib.mkEnableOption "Immich";
+    autoStart = lib.mkEnableOption "Immich auto-start";
   };
 
   config = lib.mkIf config.opts.containers.immich.enable {
     systemd.tmpfiles.rules = [
-      "d ${serverUploadDir} 2770 ${vars.username} public - -"
+      "d ${immichUploadDir} 2770 ${vars.username} public - -"
 
-      "d ${vars.containers.dataDir}/immich 2770 ${vars.username} ${localVars.immich-server.mainGroup} - -"
+      "d ${vars.containers.dataDir}/immich 2770 ${vars.username} ${localVars.immich.mainGroup} - -"
 
       "d ${vars.containers.dataDir}/immich/database 2770 ${vars.username} ${localVars.immich-database.mainGroup} - -"
       "d ${databaseDataDir} 2770 ${vars.username} ${localVars.immich-database.mainGroup} - -"
 
       "d ${vars.containers.dataDir}/immich/machine-learning 2770 ${vars.username} ${localVars.immich-machine-learning.mainGroup} - -"
       "d ${machineLearningCacheDir} 2770 ${vars.username} ${localVars.immich-machine-learning.mainGroup} - -"
+
+      "Z ${immichUploadDir} 2770 ${vars.username} public - -"
+      "Z ${vars.containers.dataDir}/immich 2770 ${vars.username} ${localVars.immich.mainGroup} - -"
+      "Z ${vars.containers.dataDir}/immich/database 2770 ${vars.username} ${localVars.immich-database.mainGroup} - -"
+      "Z ${vars.containers.dataDir}/immich/machine-learning 2770 ${vars.username} ${localVars.immich-machine-learning.mainGroup} - -"
     ];
     hm = {
       virtualisation.quadlet = {
         # https://github.com/linux-universe/immich-podman-quadlets
         containers = {
-          immich-server = {
-            autoStart = true;
+          immich = {
+            autoStart = config.opts.containers.immich.autoStart;
             serviceConfig = {
               RestartSec = "10";
               Restart = "always";
@@ -59,23 +64,23 @@ in {
               Wants = "immich-machine-learning.container";
             };
             containerConfig = {
-              image = serverImage;
+              image = immichImage;
               publishPorts = ["2283:2283"];
               environments = env;
               volumes = [
-                "${serverUploadDir}:/data"
+                "${immichUploadDir}:/data"
                 "/etc/localtime:/etc/localtime:ro"
               ];
               networks = ["immich"];
-              user = funcs.containers.mkUser "node" localVars.immich-server.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.immich-server.n;
+              user = funcs.containers.mkUser "node" localVars.immich.mainGroup;
+              uidMaps = funcs.containers.mkUidMaps localVars.immich.n;
               gidMaps =
                 funcs.containers.mkGidMaps
-                localVars.immich-server.n
-                ([localVars.immich-server.mainGroup] ++ localVars.immich-server.groups);
+                localVars.immich.n
+                ([localVars.immich.mainGroup] ++ localVars.immich.groups);
               addGroups =
                 funcs.containers.mkAddGroups
-                localVars.immich-server.groups;
+                localVars.immich.groups;
             };
           };
           immich-machine-learning = {
