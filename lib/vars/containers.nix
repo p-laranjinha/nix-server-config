@@ -18,6 +18,7 @@ vars: {
       "immich-machine-learning"
       "immich-redis"
       "immich-database"
+      "socket-proxy"
       # WARNING: When replacing a group, first remove the old one and the
       #  containers that use it, rebuild, add the new one, then rebuild again.
     ];
@@ -65,6 +66,11 @@ vars: {
       immich-database = {
         n = 8;
         mainGroup = "immich-database";
+        groups = [];
+      };
+      socket-proxy = {
+        n = 9;
+        mainGroup = "socket-proxy";
         groups = [];
       };
       # ISSUE: Add a secondary DNS to the router when messing with containers
