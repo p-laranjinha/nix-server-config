@@ -54,14 +54,14 @@ in {
                 "${copypartyHistsDir}:/hists"
               ];
               user = funcs.containers.mkUser "1000" localVars.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.n;
+              uidMaps = funcs.containers.mkUidMaps localVars.i;
               gidMaps =
                 funcs.containers.mkGidMaps
-                localVars.n
-                ([localVars.mainGroup] ++ localVars.groups);
+                localVars.i
+                ([localVars.mainGroup] ++ localVars.extraGroups);
               addGroups =
                 funcs.containers.mkAddGroups
-                localVars.groups;
+                localVars.extraGroups;
             };
           };
         };

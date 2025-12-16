@@ -68,14 +68,14 @@ in {
               user = funcs.containers.mkUser "searxng" localVars.searxng.mainGroup;
               uidMaps =
                 funcs.containers.mkUidMaps
-                localVars.searxng.n;
+                localVars.searxng.i;
               gidMaps =
                 funcs.containers.mkGidMaps
-                localVars.searxng.n
-                ([localVars.searxng.mainGroup] ++ localVars.searxng.groups);
+                localVars.searxng.i
+                ([localVars.searxng.mainGroup] ++ localVars.searxng.extraGroups);
               addGroups =
                 funcs.containers.mkAddGroups
-                localVars.searxng.groups;
+                localVars.searxng.extraGroups;
             };
           };
           searxng-valkey = {
@@ -93,14 +93,14 @@ in {
               user = funcs.containers.mkUser "valkey" localVars.searxng-valkey.mainGroup;
               uidMaps =
                 funcs.containers.mkUidMaps
-                localVars.searxng-valkey.n;
+                localVars.searxng-valkey.i;
               gidMaps =
                 funcs.containers.mkGidMaps
-                localVars.searxng-valkey.n
-                ([localVars.searxng-valkey.mainGroup] ++ localVars.searxng-valkey.groups);
+                localVars.searxng-valkey.i
+                ([localVars.searxng-valkey.mainGroup] ++ localVars.searxng-valkey.extraGroups);
               addGroups =
                 funcs.containers.mkAddGroups
-                localVars.searxng-valkey.groups;
+                localVars.searxng-valkey.extraGroups;
             };
           };
         };

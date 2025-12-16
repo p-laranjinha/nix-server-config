@@ -25,6 +25,9 @@ in
     # WARN: Additionally, rebuilding failing can also fail to remove containers
     #  from autostart.
     #  These can be removed manually in '~/.config/systemd/user/default.target.wants/'.
+    # ISSUE: If images haven't been downloaded, enabling a container will
+    #  download its image, but if too many containers have to download the
+    #  image rebuilding may take too long and fail.
     # ISSUE: Only enable autoStart for a container at a time, it takes too long
     #  to start everything at once and rebuild may fail otherwise.
     opts.containers = {

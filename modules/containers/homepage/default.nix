@@ -48,14 +48,14 @@ in {
               ];
               networks = ["homepage"];
               user = funcs.containers.mkUser "node" localVars.homepage.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.homepage.n;
+              uidMaps = funcs.containers.mkUidMaps localVars.homepage.i;
               gidMaps =
                 funcs.containers.mkGidMaps
-                localVars.homepage.n
-                ([localVars.homepage.mainGroup] ++ localVars.homepage.groups);
+                localVars.homepage.i
+                ([localVars.homepage.mainGroup] ++ localVars.homepage.extraGroups);
               addGroups =
                 funcs.containers.mkAddGroups
-                localVars.homepage.groups;
+                localVars.homepage.extraGroups;
             };
           };
           # https://gethomepage.dev/configs/docker/
@@ -80,16 +80,16 @@ in {
               ];
               networks = ["homepage"];
               user = funcs.containers.mkUser "root" localVars.socket-proxy.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.socket-proxy.n;
+              uidMaps = funcs.containers.mkUidMaps localVars.socket-proxy.i;
               gidMaps =
                 (funcs.containers.mkGidMaps
-                  localVars.socket-proxy.n
-                  ([localVars.socket-proxy.mainGroup] ++ localVars.socket-proxy.groups))
+                  localVars.socket-proxy.i
+                  ([localVars.socket-proxy.mainGroup] ++ localVars.socket-proxy.extraGroups))
                 # Map 'users' to '9999'.
                 ++ ["9999:0:1"];
               addGroups =
                 (funcs.containers.mkAddGroups
-                  localVars.socket-proxy.groups)
+                  localVars.socket-proxy.extraGroups)
                 # Add the 'users' group to the container user.
                 ++ ["9999"];
             };

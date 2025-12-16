@@ -73,14 +73,14 @@ in {
               ];
               networks = ["immich"];
               user = funcs.containers.mkUser "node" localVars.immich.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.immich.n;
+              uidMaps = funcs.containers.mkUidMaps localVars.immich.i;
               gidMaps =
                 funcs.containers.mkGidMaps
-                localVars.immich.n
-                ([localVars.immich.mainGroup] ++ localVars.immich.groups);
+                localVars.immich.i
+                ([localVars.immich.mainGroup] ++ localVars.immich.extraGroups);
               addGroups =
                 funcs.containers.mkAddGroups
-                localVars.immich.groups;
+                localVars.immich.extraGroups;
             };
           };
           immich-machine-learning = {
@@ -98,14 +98,14 @@ in {
               networkAliases = ["immich-machine-learning"];
               user = funcs.containers.mkUser "root" localVars.immich-machine-learning.mainGroup;
               dropCapabilities = vars.containers.rootCapabilities;
-              uidMaps = funcs.containers.mkUidMaps localVars.immich-machine-learning.n;
+              uidMaps = funcs.containers.mkUidMaps localVars.immich-machine-learning.i;
               gidMaps =
                 funcs.containers.mkGidMaps
-                localVars.immich-machine-learning.n
-                ([localVars.immich-machine-learning.mainGroup] ++ localVars.immich-machine-learning.groups);
+                localVars.immich-machine-learning.i
+                ([localVars.immich-machine-learning.mainGroup] ++ localVars.immich-machine-learning.extraGroups);
               addGroups =
                 funcs.containers.mkAddGroups
-                localVars.immich-machine-learning.groups;
+                localVars.immich-machine-learning.extraGroups;
             };
           };
           immich-redis = {
@@ -119,14 +119,14 @@ in {
               networks = ["immich"];
               networkAliases = ["redis"];
               user = funcs.containers.mkUser "valkey" localVars.immich-redis.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.immich-redis.n;
+              uidMaps = funcs.containers.mkUidMaps localVars.immich-redis.i;
               gidMaps =
                 funcs.containers.mkGidMaps
-                localVars.immich-redis.n
-                ([localVars.immich-redis.mainGroup] ++ localVars.immich-redis.groups);
+                localVars.immich-redis.i
+                ([localVars.immich-redis.mainGroup] ++ localVars.immich-redis.extraGroups);
               addGroups =
                 funcs.containers.mkAddGroups
-                localVars.immich-redis.groups;
+                localVars.immich-redis.extraGroups;
             };
           };
           immich-database = {
@@ -151,14 +151,14 @@ in {
               networks = ["immich"];
               networkAliases = ["database"];
               user = funcs.containers.mkUser "postgres" localVars.immich-database.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.immich-database.n;
+              uidMaps = funcs.containers.mkUidMaps localVars.immich-database.i;
               gidMaps =
                 funcs.containers.mkGidMaps
-                localVars.immich-database.n
-                ([localVars.immich-database.mainGroup] ++ localVars.immich-database.groups);
+                localVars.immich-database.i
+                ([localVars.immich-database.mainGroup] ++ localVars.immich-database.extraGroups);
               addGroups =
                 funcs.containers.mkAddGroups
-                localVars.immich-database.groups;
+                localVars.immich-database.extraGroups;
             };
           };
         };

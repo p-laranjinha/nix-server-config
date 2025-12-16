@@ -33,13 +33,13 @@ vars: let
       {
         copyparty = {
           mainGroup = "copyparty";
-          groups = ["public"];
+          extraGroups = ["public"];
         };
       }
       {
         immich = {
           mainGroup = "immich";
-          groups = ["public"];
+          extraGroups = ["public"];
         };
       }
       {immich-machine-learning.mainGroup = "immich-machine-learning";}
@@ -65,10 +65,9 @@ in {
           in {
             name = containerName;
             value = {
-              # TODO: rename 'n' to 'i' and 'groups' to 'extraGroups'
-              n = i;
+              i = i;
               mainGroup = containerValue.mainGroup or null;
-              groups = containerValue.groups or [];
+              extraGroups = containerValue.groups or [];
             };
           }
         ) (length value))

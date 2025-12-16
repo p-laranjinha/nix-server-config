@@ -63,7 +63,7 @@ in {
               # I think the blocky container might just be a single binary, but
               #  the image layers (I think equivalent to a compose file) sets
               #  user to 100. I don't think it uses any group though.
-              uidMaps = funcs.containers.mkUidMaps localVars.n;
+              uidMaps = funcs.containers.mkUidMaps localVars.i;
             };
           };
         };
