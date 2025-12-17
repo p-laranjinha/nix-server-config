@@ -16,6 +16,7 @@ vars: let
       "immich"
       "immich-machine-learning"
       "immich-database"
+      "swag"
     ];
     # Unfortunately, I need to make this a list if I want to keep the order in
     #  the modifying function below. If I used an attrset, they would be sorted
@@ -41,8 +42,7 @@ vars: let
       {immich-machine-learning.mainGroup = "immich-machine-learning";}
       {immich-redis = {};}
       {immich-database.mainGroup = "immich-database";}
-      # ISSUE: Add a secondary DNS to the router when messing with containers
-      #  as if pihole is down as the only DNS, there is no internet.
+      {swag = {};}
     ];
     dataDir = "${vars.homeDirectory}/container-data";
     publicDir = "${vars.homeDirectory}/public";
