@@ -12,13 +12,10 @@ vars: let
       "searxng"
       "searxng-valkey"
       "homepage"
-      "blocky" # TODO: remove
       "copyparty"
       "immich"
       "immich-machine-learning"
       "immich-database"
-      "socket-proxy" # TODO: remove
-      "immich-redis" # TODO: remove
     ];
     # Unfortunately, I need to make this a list if I want to keep the order in
     #  the modifying function below. If I used an attrset, they would be sorted
@@ -27,9 +24,8 @@ vars: let
       {searxng.mainGroup = "searxng";}
       {searxng-valkey.mainGroup = "searxng-valkey";}
       {homepage.mainGroup = "homepage";}
-      {blocky.mainGroup = "blocky";}
-      # {socket-proxy.mainGroup = "users";}
-      {socket-proxy.mainGroup = "socket-proxy";}
+      {socket-proxy.mainGroup = "users";}
+      {blocky = {};}
       {
         copyparty = {
           mainGroup = "copyparty";
@@ -43,8 +39,7 @@ vars: let
         };
       }
       {immich-machine-learning.mainGroup = "immich-machine-learning";}
-      # {immich-redis = {};}
-      {immich-redis.mainGroup = "immich-redis";}
+      {immich-redis = {};}
       {immich-database.mainGroup = "immich-database";}
       # ISSUE: Add a secondary DNS to the router when messing with containers
       #  as if pihole is down as the only DNS, there is no internet.
@@ -67,7 +62,7 @@ in {
             value = {
               i = i;
               mainGroup = containerValue.mainGroup or null;
-              extraGroups = containerValue.groups or [];
+              extraGroups = containerValue.extraGroups or [];
             };
           }
         ) (length value))

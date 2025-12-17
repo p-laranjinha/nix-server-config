@@ -10,6 +10,7 @@
   #  to a clean slate.
   # I've tried doing the same with the option 'opts.containers.enable' but it
   #  didn't seem to reset properly. Especially the subgids and subuids.
+  # WARN: If things still don't work, try `podman system reset`.
   enable = true;
 in
   if enable
@@ -18,6 +19,9 @@ in
       [inputs.quadlet-nix.nixosModules.quadlet]
       ++ lib.attrValues (lib.modulesIn ./.);
 
+    # Rebuilding with multiple containers may fail because running the containers
+    #  and their configuration may take too long. Rebuilding a second time may
+    #  also work.
     # WARN: Sometimes when rebuilding fails, to remove the container services,
     #  the files at '~/.config/systemd/user/' and '~/.config/containers/systemd/'
     #  have to be deleted manually.
@@ -25,11 +29,6 @@ in
     # WARN: Additionally, rebuilding failing can also fail to remove containers
     #  from autostart.
     #  These can be removed manually in '~/.config/systemd/user/default.target.wants/'.
-    # ISSUE: If images haven't been downloaded, enabling a container will
-    #  download its image, but if too many containers have to download the
-    #  image rebuilding may take too long and fail.
-    # ISSUE: Only enable autoStart for a container at a time, it takes too long
-    #  to start everything at once and rebuild may fail otherwise.
     opts.containers = {
       searxng.enable = true;
       searxng.autoStart = true;
@@ -47,6 +46,11 @@ in
       "d ${vars.containers.dataDir} 2770 ${vars.username} users - -"
       "d ${vars.containers.publicDir} 2770 ${vars.username} public - -"
     ];
+
+    systemd.services.${"home-manager-${vars.username}"}.serviceConfig = {
+      # Extending timeout because starting containers can take quite a bit.
+      TimeoutStartSec = lib.mkForce "30m";
+    };
 
     # Enable podman & podman systemd generator.
     virtualisation.quadlet.enable = true;

@@ -76,22 +76,20 @@ in {
                 CONTAINERS = "1";
               };
               volumes = [
+                # WARN: You may need to reboot for 'podman.sock' to be created.
+                #  Or run `systemctl --user start podman.socket`.
                 "/run/user/1000/podman/podman.sock:/var/run/docker.sock:ro"
               ];
               networks = ["homepage"];
               user = funcs.containers.mkUser "root" localVars.socket-proxy.mainGroup;
               uidMaps = funcs.containers.mkUidMaps localVars.socket-proxy.i;
               gidMaps =
-                (funcs.containers.mkGidMaps
-                  localVars.socket-proxy.i
-                  ([localVars.socket-proxy.mainGroup] ++ localVars.socket-proxy.extraGroups))
-                # Map 'users' to '9999'.
-                ++ ["9999:0:1"];
+                funcs.containers.mkGidMaps
+                localVars.socket-proxy.i
+                ([localVars.socket-proxy.mainGroup] ++ localVars.socket-proxy.extraGroups);
               addGroups =
-                (funcs.containers.mkAddGroups
-                  localVars.socket-proxy.extraGroups)
-                # Add the 'users' group to the container user.
-                ++ ["9999"];
+                funcs.containers.mkAddGroups
+                localVars.socket-proxy.extraGroups;
             };
           };
         };
