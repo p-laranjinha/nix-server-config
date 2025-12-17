@@ -7,7 +7,7 @@
 }: let
   localVars = vars.containers.containers.copyparty;
 
-  copypartyImage = "ghcr.io/9001/copyparty-ac:1.19.21@sha256:b1f8be53f068ad37f583cfd93b6a3611472ee8c30e98177389629631a4b6b4ca";
+  copypartyImage = "ghcr.io/9001/copyparty-ac:1.19.21";
 
   # Making a new config directory separate from /cfg, because other things
   #  are stored in /cfg that I don't want in the repo.

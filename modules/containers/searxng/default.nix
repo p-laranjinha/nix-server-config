@@ -7,8 +7,8 @@
 }: let
   localVars = vars.containers.containers;
 
-  searxngImage = "ghcr.io/searxng/searxng:2025.12.12-920b40253@sha256:b88ef002ab1d9a901766f9eb59779089a74e8f444477e0151fa8cd1f91a02006";
-  valkeyImage = "ghcr.io/valkey-io/valkey:9.0.1@sha256:fb8d272e529ea567b9bf1302245796f21a2672b8368ca3fcb938ac334e613c8f";
+  searxngImage = "ghcr.io/searxng/searxng:2025.12.12-920b40253";
+  valkeyImage = "ghcr.io/valkey-io/valkey:9.0.1";
 
   searxngConfigDir = funcs.relativeToAbsoluteConfigPath ./config;
   searxngDataDir = "${vars.containers.dataDir}/searxng/data";

@@ -42,7 +42,7 @@ vars: let
       {immich-machine-learning.mainGroup = "immich-machine-learning";}
       {immich-redis = {};}
       {immich-database.mainGroup = "immich-database";}
-      {swag = {};}
+      {swag.mainGroup = "swag";}
     ];
     dataDir = "${vars.homeDirectory}/container-data";
     publicDir = "${vars.homeDirectory}/public";

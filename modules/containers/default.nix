@@ -40,12 +40,17 @@ in
       copyparty.autoStart = true;
       immich.enable = true;
       immich.autoStart = true;
+      swag.enable = true;
+      # swag.autoStart = true;
     };
 
     systemd.tmpfiles.rules = [
       "d ${vars.containers.dataDir} 2770 ${vars.username} users - -"
       "d ${vars.containers.publicDir} 2770 ${vars.username} public - -"
     ];
+
+    # Allow non-root users to bind to privileged ports like 80.
+    boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
 
     systemd.services.${"home-manager-${vars.username}"}.serviceConfig = {
       # Extending timeout because starting containers can take quite a bit.

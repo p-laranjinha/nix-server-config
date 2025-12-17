@@ -19,7 +19,7 @@
 }: let
   localVars = vars.containers.containers.blocky;
 
-  blockyImage = "ghcr.io/0xerr0r/blocky:v0.28.2@sha256:5f84a54e4ee950c4ab21db905b7497476ece2f4e1a376d23ab8c4855cabddcba";
+  blockyImage = "ghcr.io/0xerr0r/blocky:v0.28.2";
 
   blockyConfigFile = funcs.relativeToAbsoluteConfigPath ./config.yaml;
 in {
@@ -33,8 +33,6 @@ in {
       # Blocky doesn't use groups so make sure the config file is readable by anyone.
       "z ${blockyConfigFile} 644 ${vars.username} users - -"
     ];
-    # Allow non-root users to bind to privileged ports like 80.
-    boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
     networking.firewall.allowedTCPPorts = [53];
     networking.firewall.allowedUDPPorts = [53];
     hm = {

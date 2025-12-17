@@ -8,11 +8,10 @@
 }: let
   localVars = vars.containers.containers;
   # Obtained versions from the release 'docker-compose.yml'.
-  # If you can't find the 'sha' use `podman images --digest`.
-  immichImage = "ghcr.io/immich-app/immich-server:v2.3.1@sha256:f8d06a32b1b2a81053d78e40bf8e35236b9faefb5c3903ce9ca8712c9ed78445";
-  redisImage = "ghcr.io/valkey-io/valkey:8.1.5@sha256:e6519c81133f55170dcaf1c7711dea0770dc756a7aef0cb919204c8d6e325776";
-  databaseImage = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
-  machineLearningImage = "ghcr.io/immich-app/immich-machine-learning:v2.3.1@sha256:379e31b8c75107b0af8141904baa8cc933d7454b88fdb204265ef11749d7d908";
+  immichImage = "ghcr.io/immich-app/immich-server:v2.3.1";
+  machineLearningImage = "ghcr.io/immich-app/immich-machine-learning:v2.3.1";
+  redisImage = "ghcr.io/valkey-io/valkey:8.1.5";
+  databaseImage = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0";
 
   immichUploadDir = "${vars.containers.publicDir}/images";
   databaseDataDir = "${vars.containers.dataDir}/immich/database/data";
