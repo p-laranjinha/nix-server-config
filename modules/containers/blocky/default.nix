@@ -41,12 +41,11 @@ in {
       virtualisation.quadlet = {
         containers = {
           # https://0xerr0r.github.io/blocky/latest/
-          blocky = {
+          # I think the blocky container might just be a single binary, but
+          #  the image layers (I think equivalent to a compose file) sets
+          #  user to 100. I don't think it uses any group though.
+          blocky = funcs.containers.mkConfig null localVars {
             autoStart = config.opts.containers.blocky.autoStart;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
             containerConfig = {
               image = blockyImage;
               publishPorts = [
@@ -60,10 +59,6 @@ in {
               volumes = [
                 "${blockyConfigFile}:/app/config.yml:ro"
               ];
-              # I think the blocky container might just be a single binary, but
-              #  the image layers (I think equivalent to a compose file) sets
-              #  user to 100. I don't think it uses any group though.
-              uidMaps = funcs.containers.mkUidMaps localVars.i;
             };
           };
         };

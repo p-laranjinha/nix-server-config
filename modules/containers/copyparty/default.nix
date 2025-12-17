@@ -33,12 +33,8 @@ in {
     hm = {
       virtualisation.quadlet = {
         containers = {
-          copyparty = {
+          copyparty = funcs.containers.mkConfig "1000" localVars {
             autoStart = config.opts.containers.copyparty.autoStart;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
             containerConfig = {
               image = copypartyImage;
               # Modified the entry pointfound here:
@@ -53,15 +49,6 @@ in {
                 "${copypartyCfgDir}:/cfg"
                 "${copypartyHistsDir}:/hists"
               ];
-              user = funcs.containers.mkUser "1000" localVars.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.i;
-              gidMaps =
-                funcs.containers.mkGidMaps
-                localVars.i
-                ([localVars.mainGroup] ++ localVars.extraGroups);
-              addGroups =
-                funcs.containers.mkAddGroups
-                localVars.extraGroups;
             };
           };
         };

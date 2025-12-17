@@ -28,12 +28,8 @@ in {
     hm = {
       virtualisation.quadlet = {
         containers = {
-          homepage = {
+          homepage = funcs.containers.mkConfig "node" localVars.homepage {
             autoStart = config.opts.containers.homepage.autoStart;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
             unitConfig = {
               Requires = "socket-proxy.container";
             };
@@ -47,15 +43,6 @@ in {
                 "${configDir}:/app/config"
               ];
               networks = ["homepage"];
-              user = funcs.containers.mkUser "node" localVars.homepage.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.homepage.i;
-              gidMaps =
-                funcs.containers.mkGidMaps
-                localVars.homepage.i
-                ([localVars.homepage.mainGroup] ++ localVars.homepage.extraGroups);
-              addGroups =
-                funcs.containers.mkAddGroups
-                localVars.homepage.extraGroups;
             };
           };
           # https://gethomepage.dev/configs/docker/
@@ -64,12 +51,7 @@ in {
           #  in between that is more controllable and accessable via an API.
           # WARN: Don't publish ports and directly expose this to the internet,
           #  just use container networks or there's no point in using it.
-          socket-proxy = {
-            autoStart = false;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
+          socket-proxy = funcs.containers.mkConfig "root" localVars.socket-proxy {
             containerConfig = {
               image = socketProxyImage;
               environments = {
@@ -81,15 +63,7 @@ in {
                 "/run/user/1000/podman/podman.sock:/var/run/docker.sock:ro"
               ];
               networks = ["homepage"];
-              user = funcs.containers.mkUser "root" localVars.socket-proxy.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.socket-proxy.i;
-              gidMaps =
-                funcs.containers.mkGidMaps
-                localVars.socket-proxy.i
-                ([localVars.socket-proxy.mainGroup] ++ localVars.socket-proxy.extraGroups);
-              addGroups =
-                funcs.containers.mkAddGroups
-                localVars.socket-proxy.extraGroups;
+              dropCapabilities = vars.containers.rootCapabilities;
             };
           };
         };

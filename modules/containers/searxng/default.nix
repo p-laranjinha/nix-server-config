@@ -44,12 +44,8 @@ in {
       # https://seiarotg.github.io/quadlet-nix/home-manager-options.html
       virtualisation.quadlet = {
         containers = {
-          searxng = {
+          searxng = funcs.containers.mkConfig "searxng" localVars.searxng {
             autoStart = config.opts.containers.searxng.autoStart;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
             unitConfig = {
               Requires = "searxng-valkey.container";
             };
@@ -65,42 +61,15 @@ in {
                 "${searxngDataDir}:/var/cache/searxng"
               ];
               networks = ["searxng"];
-              user = funcs.containers.mkUser "searxng" localVars.searxng.mainGroup;
-              uidMaps =
-                funcs.containers.mkUidMaps
-                localVars.searxng.i;
-              gidMaps =
-                funcs.containers.mkGidMaps
-                localVars.searxng.i
-                ([localVars.searxng.mainGroup] ++ localVars.searxng.extraGroups);
-              addGroups =
-                funcs.containers.mkAddGroups
-                localVars.searxng.extraGroups;
             };
           };
-          searxng-valkey = {
-            autoStart = false;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
+          searxng-valkey = funcs.containers.mkConfig "valkey" localVars.searxng-valkey {
             containerConfig = {
               image = valkeyImage;
               exec = "valkey-server --save 30 1";
               volumes = ["${valkeyDataDir}:/data"];
               networkAliases = ["valkey"];
               networks = ["searxng"];
-              user = funcs.containers.mkUser "valkey" localVars.searxng-valkey.mainGroup;
-              uidMaps =
-                funcs.containers.mkUidMaps
-                localVars.searxng-valkey.i;
-              gidMaps =
-                funcs.containers.mkGidMaps
-                localVars.searxng-valkey.i
-                ([localVars.searxng-valkey.mainGroup] ++ localVars.searxng-valkey.extraGroups);
-              addGroups =
-                funcs.containers.mkAddGroups
-                localVars.searxng-valkey.extraGroups;
             };
           };
         };

@@ -8,10 +8,11 @@
 }: let
   localVars = vars.containers.containers;
   # Obtained versions from the release 'docker-compose.yml'.
-  immichImage = "ghcr.io/immich-app/immich-server:v2.3.1";
+  # If you can't find the 'sha' use `podman images --digest`.
+  immichImage = "ghcr.io/immich-app/immich-server:v2.3.1@sha256:f8d06a32b1b2a81053d78e40bf8e35236b9faefb5c3903ce9ca8712c9ed78445";
   redisImage = "ghcr.io/valkey-io/valkey:8.1.5@sha256:e6519c81133f55170dcaf1c7711dea0770dc756a7aef0cb919204c8d6e325776";
   databaseImage = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
-  machineLearningImage = "ghcr.io/immich-app/immich-machine-learning:v2.3.1";
+  machineLearningImage = "ghcr.io/immich-app/immich-machine-learning:v2.3.1@sha256:379e31b8c75107b0af8141904baa8cc933d7454b88fdb204265ef11749d7d908";
 
   immichUploadDir = "${vars.containers.publicDir}/images";
   databaseDataDir = "${vars.containers.dataDir}/immich/database/data";
@@ -50,12 +51,8 @@ in {
       virtualisation.quadlet = {
         # https://github.com/linux-universe/immich-podman-quadlets
         containers = {
-          immich = {
+          immich = funcs.containers.mkConfig "node" localVars.immich {
             autoStart = config.opts.containers.immich.autoStart;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
             # This makes it so that the other containers can have autoStart as
             #  false, but even so this container will start before the ones
             #  it depends on and fail at least once per startup.
@@ -72,23 +69,9 @@ in {
                 "/etc/localtime:/etc/localtime:ro"
               ];
               networks = ["immich"];
-              user = funcs.containers.mkUser "node" localVars.immich.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.immich.i;
-              gidMaps =
-                funcs.containers.mkGidMaps
-                localVars.immich.i
-                ([localVars.immich.mainGroup] ++ localVars.immich.extraGroups);
-              addGroups =
-                funcs.containers.mkAddGroups
-                localVars.immich.extraGroups;
             };
           };
-          immich-machine-learning = {
-            autoStart = false;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
+          immich-machine-learning = funcs.containers.mkConfig "root" localVars.immich-machine-learning {
             containerConfig = {
               image = machineLearningImage;
               volumes = [
@@ -96,45 +79,17 @@ in {
               ];
               networks = ["immich"];
               networkAliases = ["immich-machine-learning"];
-              user = funcs.containers.mkUser "root" localVars.immich-machine-learning.mainGroup;
               dropCapabilities = vars.containers.rootCapabilities;
-              uidMaps = funcs.containers.mkUidMaps localVars.immich-machine-learning.i;
-              gidMaps =
-                funcs.containers.mkGidMaps
-                localVars.immich-machine-learning.i
-                ([localVars.immich-machine-learning.mainGroup] ++ localVars.immich-machine-learning.extraGroups);
-              addGroups =
-                funcs.containers.mkAddGroups
-                localVars.immich-machine-learning.extraGroups;
             };
           };
-          immich-redis = {
-            autoStart = false;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
+          immich-redis = funcs.containers.mkConfig "valkey" localVars.immich-redis {
             containerConfig = {
               image = redisImage;
               networks = ["immich"];
               networkAliases = ["redis"];
-              user = funcs.containers.mkUser "valkey" localVars.immich-redis.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.immich-redis.i;
-              gidMaps =
-                funcs.containers.mkGidMaps
-                localVars.immich-redis.i
-                ([localVars.immich-redis.mainGroup] ++ localVars.immich-redis.extraGroups);
-              addGroups =
-                funcs.containers.mkAddGroups
-                localVars.immich-redis.extraGroups;
             };
           };
-          immich-database = {
-            autoStart = false;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
+          immich-database = funcs.containers.mkConfig "postgres" localVars.immich-database {
             containerConfig = {
               image = databaseImage;
               environments = {
@@ -150,15 +105,6 @@ in {
               shmSize = "128mb";
               networks = ["immich"];
               networkAliases = ["database"];
-              user = funcs.containers.mkUser "postgres" localVars.immich-database.mainGroup;
-              uidMaps = funcs.containers.mkUidMaps localVars.immich-database.i;
-              gidMaps =
-                funcs.containers.mkGidMaps
-                localVars.immich-database.i
-                ([localVars.immich-database.mainGroup] ++ localVars.immich-database.extraGroups);
-              addGroups =
-                funcs.containers.mkAddGroups
-                localVars.immich-database.extraGroups;
             };
           };
         };

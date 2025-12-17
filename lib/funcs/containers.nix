@@ -34,10 +34,37 @@
       )}:1") (builtins.filter (x: x != null) gs));
 
     mkAddGroups = map (g: "${funcs.containers.getContainerGid g}");
-    mkUser = user: group: "${user}${
-      if group != null
-      then ":${funcs.containers.getContainerGid group}"
-      else ""
-    }";
+    mkUser = user: group:
+      if user != null
+      then "${user}${
+        if group != null
+        then ":${funcs.containers.getContainerGid group}"
+        else ""
+      }"
+      else null;
+
+    mkConfig = user: containerVars: extraConfig:
+      lib.recursiveUpdate
+      {
+        autoStart = false;
+        serviceConfig = {
+          RestartSec = "10";
+          Restart = "always";
+        };
+        containerConfig = {
+          user = funcs.containers.mkUser user containerVars.mainGroup;
+          uidMaps =
+            funcs.containers.mkUidMaps
+            containerVars.i;
+          gidMaps =
+            funcs.containers.mkGidMaps
+            containerVars.i
+            ([containerVars.mainGroup] ++ containerVars.extraGroups);
+          addGroups =
+            funcs.containers.mkAddGroups
+            containerVars.extraGroups;
+        };
+      }
+      extraConfig;
   };
 }
