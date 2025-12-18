@@ -61,7 +61,7 @@ in {
             };
             containerConfig = {
               image = immichImage;
-              publishPorts = ["2283:2283"];
+              # publishPorts = ["2283:2283"];
               environments = env;
               volumes = [
                 "${immichUploadDir}:/data"

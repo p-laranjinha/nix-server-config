@@ -31,16 +31,16 @@ in
     #  These can be removed manually in '~/.config/systemd/user/default.target.wants/'.
     opts.containers = {
       searxng.enable = true;
-      searxng.autoStart = true;
       homepage.enable = true;
-      homepage.autoStart = true;
       blocky.enable = true;
-      blocky.autoStart = true;
       copyparty.enable = true;
-      copyparty.autoStart = true;
       immich.enable = true;
-      immich.autoStart = true;
       swag.enable = true;
+      searxng.autoStart = true;
+      homepage.autoStart = true;
+      blocky.autoStart = true;
+      copyparty.autoStart = true;
+      immich.autoStart = true;
       swag.autoStart = true;
     };
 
@@ -151,3 +151,4 @@ in
 #  set their permissions. Using 2___ permissions, makes it so the files created
 #  in that directory inherit the group, so I can hopefully at least read the
 #  files outside the container.
+

@@ -24,7 +24,6 @@ in {
     ];
     # Required to run homepage in rootless mode and it being able to read containers.
     users.users.${vars.username}.extraGroups = ["podman"];
-    networking.firewall.allowedTCPPorts = [3000];
     hm = {
       virtualisation.quadlet = {
         containers = {
@@ -35,9 +34,9 @@ in {
             };
             containerConfig = {
               image = homepageImage;
-              publishPorts = ["3000:3000"];
+              # publishPorts = ["3000:3000"];
               environments = {
-                HOMEPAGE_ALLOWED_HOSTS = "192.168.1.4:3000,server:3000";
+                HOMEPAGE_ALLOWED_HOSTS = "home.orangepebble.net,homepage.orangepebble.net,home.casa.pt,homepage.casa.pt";
               };
               volumes = [
                 "${configDir}:/app/config"

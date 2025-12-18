@@ -40,9 +40,7 @@ in {
               # Modified the entry pointfound here:
               #  https://github.com/9001/copyparty/blob/hovudstraum/scripts/docker/Dockerfile.ac
               exec = "-c /z/initcfg -c /copyparty-config";
-              publishPorts = [
-                "3923:3923"
-              ];
+              # publishPorts = ["3923:3923"];
               volumes = [
                 "${vars.containers.publicDir}:/w"
                 "${copypartyConfigDir}:/copyparty-config"

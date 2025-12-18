@@ -39,7 +39,6 @@ in {
       mode = "0400";
       owner = vars.username;
     };
-    networking.firewall.allowedTCPPorts = [8080];
     hm = {
       # https://seiarotg.github.io/quadlet-nix/home-manager-options.html
       virtualisation.quadlet = {
@@ -51,7 +50,7 @@ in {
             };
             containerConfig = {
               image = searxngImage;
-              publishPorts = ["8080:8080"];
+              # publishPorts = ["8080:8080"];
               environments = {
                 FORCE_OWNERSHIP = "false";
               };
@@ -73,9 +72,7 @@ in {
             };
           };
         };
-        networks = {
-          searxng = {};
-        };
+        networks.searxng = {};
       };
     };
   };
