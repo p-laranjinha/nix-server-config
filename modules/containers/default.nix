@@ -41,9 +41,10 @@ in
       immich.enable = true;
       immich.autoStart = true;
       swag.enable = true;
-      # swag.autoStart = true;
+      swag.autoStart = true;
     };
 
+    # Run 'systemd-tmpfiles' to apply these rules manually.
     systemd.tmpfiles.rules = [
       "d ${vars.containers.dataDir} 2770 ${vars.username} users - -"
       "d ${vars.containers.publicDir} 2770 ${vars.username} public - -"
@@ -150,4 +151,3 @@ in
 #  set their permissions. Using 2___ permissions, makes it so the files created
 #  in that directory inherit the group, so I can hopefully at least read the
 #  files outside the container.
-

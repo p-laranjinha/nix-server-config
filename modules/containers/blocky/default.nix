@@ -105,4 +105,3 @@ in {
 #  server field empty on the DHCP server, but depending on how the client (PC,
 #  phone, etc) handle primary and secondary DNS servers, the DNS server on my
 #  server may never be used.
-
