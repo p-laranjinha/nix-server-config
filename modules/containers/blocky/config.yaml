@@ -8,9 +8,9 @@ upstreams:
   groups:
     default:
       # Control D (DNS over HTTPS)
-      - https://freedns.controld.com/p2
+      - https://freedns.controld.com/p0
       # Mullvad (DNS over HTTPS)
-      - https://base.dns.mullvad.net/dns-query
+      - https://dns.mullvad.net/dns-query
 
 customDNS:
   mapping:
@@ -22,6 +22,10 @@ blocking:
     default:
       - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/domains/pro.txt
       - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/domains/tif.txt
+  allowlists:
+    default:
+      - |
+        hiltontechservices.com
   clientGroupsBlock:
     default:
       - default

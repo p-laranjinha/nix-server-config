@@ -10,6 +10,9 @@
 #  - Reserved IP address 192.168.1.3 to the desktop.
 #  - Reserved IP address 192.168.1.4 to the server.
 #  - Reserved IP address 192.168.1.5 to the printer.
+# I've set the primary and secondary DNSs on both my router and blocky to the
+#  unfiltered versions (without adblocking) because they were interfering with
+#  mom's work. Tt also gives me more control over what to block/allow.
 {
   vars,
   funcs,
