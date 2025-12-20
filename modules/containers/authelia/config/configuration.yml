@@ -10,8 +10,11 @@ totp:
   issuer: 'orangepebble.net'
 
 authentication_backend:
-  file:
-    path: '/config/users_database.yml'
+  ldap:
+    implementation: 'lldap'
+    address: 'ldap://lldap:3890'
+    base_dn: 'DC=orangepebble,DC=net'
+    user: 'UID=admin,OU=people,DC=orangepebble,DC=net'
 
 access_control:
   default_policy: 'deny'
@@ -55,4 +58,3 @@ notifier:
     username: 'orangepebbleauth@gmail.com'
     sender: 'OrangePebble Auth <auth@orangepebble.com>'
     subject: 'OrangePebble Auth {title}'
-...

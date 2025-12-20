@@ -52,6 +52,7 @@ in {
         format = "dotenv";
         group = localVars.authelia-postgres.mainGroup;
       };
+      authelia-ldap-password.sopsFile = ../lldap/secrets/ldap-user-pass;
     };
     hm = {
       virtualisation.quadlet = {
@@ -65,15 +66,16 @@ in {
                 then lib.mergeAttrsList values
                 else values) (builtins.map (x: {
                   environments.${x.name} = x.value;
+                  # https://docs.podman.io/en/latest/markdown/podman-run.1.html#secret-secret-opt-opt
                   # Not using the 'secrets' option because that would require extra configuration.
                   volumes = "${x.value}:${x.value}";
                 }) (lib.attrsToList {
-                  # https://docs.podman.io/en/latest/markdown/podman-run.1.html#secret-secret-opt-opt
                   AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE = config.secrets.authelia-JWT_SECRET.path;
                   AUTHELIA_SESSION_SECRET_FILE = config.secrets.authelia-SESSION_SECRET.path;
                   AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE = config.secrets.authelia-STORAGE_PASSWORD.path;
                   AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE = config.secrets.authelia-STORAGE_ENCRYPTION_KEY.path;
                   AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE = config.secrets.authelia-SMTP_PASSWORD.path;
+                  AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE = config.secrets.authelia-ldap-password.path;
                 }));
             in {
               image = autheliaImage;

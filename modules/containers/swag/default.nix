@@ -21,6 +21,8 @@
   immichConfFile.destination = "${defaultConfigDir}/nginx/proxy-confs/immich.subdomain.conf";
   copypartyConfFile.source = "${configDir}/copyparty.subdomain.conf";
   copypartyConfFile.destination = "${defaultConfigDir}/nginx/proxy-confs/copyparty.subdomain.conf";
+  lldapConfFile.source = "${configDir}/lldap.subdomain.conf";
+  lldapConfFile.destination = "${defaultConfigDir}/nginx/proxy-confs/lldap.subdomain.conf";
   containerPUID = "1000";
   hostPUID = toString ((lib.toInt containerPUID) + vars.containers.uidGidCount * localVars.i + (builtins.elemAt config.users.users.${vars.username}.subUidRanges 0).startUid);
 in {
@@ -49,6 +51,7 @@ in {
       "L+ ${searxngConfFile.destination} - - - - ${searxngConfFile.source}"
       "L+ ${immichConfFile.destination} - - - - ${immichConfFile.source}"
       "L+ ${copypartyConfFile.destination} - - - - ${copypartyConfFile.source}"
+      "L+ ${lldapConfFile.destination} - - - - ${lldapConfFile.source}"
     ];
     secrets.certbot-porkbun = {
       sopsFile = ./porkbun.ini;
@@ -69,6 +72,7 @@ in {
           swag-immich = {};
           swag-copyparty = {};
           swag-authelia = {};
+          swag-lldap = {};
         };
         containers = {
           searxng.containerConfig.networks = ["swag-searxng"];
@@ -76,6 +80,7 @@ in {
           immich.containerConfig.networks = ["swag-immich"];
           copyparty.containerConfig.networks = ["swag-copyparty"];
           authelia.containerConfig.networks = ["swag-authelia"];
+          lldap.containerConfig.networks = ["swag-lldap"];
           swag = funcs.containers.mkConfig "root" localVars {
             autoStart = config.opts.containers.swag.autoStart;
             serviceConfig = {
@@ -106,6 +111,7 @@ in {
                 "${searxngConfFile.source}:${searxngConfFile.source}"
                 "${immichConfFile.source}:${immichConfFile.source}"
                 "${copypartyConfFile.source}:${copypartyConfFile.source}"
+                "${lldapConfFile.source}:${lldapConfFile.source}"
               ];
               networks = [
                 "swag-searxng"
@@ -113,6 +119,7 @@ in {
                 "swag-immich"
                 "swag-copyparty"
                 "swag-authelia"
+                "swag-lldap"
                 # WARN: Everytime you change this, you need to remove
                 #  '${defaultConfigDir}/nginx/resolver.conf' or else the
                 #  new networks aren't used.

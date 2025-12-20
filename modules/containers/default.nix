@@ -39,6 +39,7 @@ in
       immich.enable = true;
       swag.enable = true;
       authelia.enable = true;
+      lldap.enable = true;
 
       searxng.autoStart = true;
       homepage.autoStart = true;
@@ -47,6 +48,7 @@ in
       # immich.autoStart = true;
       swag.autoStart = true;
       authelia.autoStart = true;
+      lldap.autoStart = true;
     };
 
     # Run 'systemd-tmpfiles' to apply these rules manually.
