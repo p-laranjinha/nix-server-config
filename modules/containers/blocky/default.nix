@@ -11,8 +11,8 @@
 #  - Reserved IP address 192.168.1.4 to the server.
 #  - Reserved IP address 192.168.1.5 to the printer.
 # I've set the primary and secondary DNSs on both my router and blocky to the
-#  unfiltered versions (without adblocking) because they were interfering with
-#  mom's work. Tt also gives me more control over what to block/allow.
+#  unfiltered versions (without adblocking) because it gives me more control
+#  over what to block/allow, in case I need access to something blocked.
 {
   vars,
   funcs,
@@ -108,3 +108,4 @@ in {
 #  server field empty on the DHCP server, but depending on how the client (PC,
 #  phone, etc) handle primary and secondary DNS servers, the DNS server on my
 #  server may never be used.
+

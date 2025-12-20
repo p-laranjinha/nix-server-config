@@ -11,6 +11,8 @@
   # I've tried doing the same with the option 'opts.containers.enable' but it
   #  didn't seem to reset properly. Especially the subgids and subuids.
   # WARN: If things still don't work, try `podman system reset`.
+  # WARN: If the reset command still doesn't work, also remove the directory
+  #  '~/.local/share/containers'.
   enable = true;
 in
   if enable
@@ -36,12 +38,15 @@ in
       copyparty.enable = true;
       immich.enable = true;
       swag.enable = true;
+      authelia.enable = true;
+
       searxng.autoStart = true;
       homepage.autoStart = true;
       blocky.autoStart = true;
       copyparty.autoStart = true;
-      immich.autoStart = true;
+      # immich.autoStart = true;
       swag.autoStart = true;
+      authelia.autoStart = true;
     };
 
     # Run 'systemd-tmpfiles' to apply these rules manually.
@@ -60,6 +65,16 @@ in
 
     # Enable podman & podman systemd generator.
     virtualisation.quadlet.enable = true;
+    # https://github.com/containers/podman/discussions/24458
+    # https://discourse.nixos.org/t/rootless-podman-setup-with-home-manager/57905
+    # https://discourse.nixos.org/t/why-is-fuse-overlayfs-mounting-layers-as-root/42236
+    # https://github.com/containers/podman/issues/8259
+    # A different driver from "overlay" is required or `podman run` can get
+    #  stuck on creating an ID-mapped copy of a layer.
+    # The URLs above didn't really solve it, but they helped reach the solution.
+    # https://github.com/containers/storage/blob/main/docs/containers-storage.conf.5.md
+    virtualisation.containers.storage.settings.storage.driver = "vfs";
+
     users.users.${vars.username} = {
       # Required for auto start before user login.
       linger = true;

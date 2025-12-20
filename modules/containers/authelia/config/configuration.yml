@@ -1,0 +1,59 @@
+# https://github.com/authelia/authelia/blob/40aeb8fc978322dbc2abe92b496357e876dcc92a/examples/compose/lite/authelia/configuration.yml
+
+server:
+  address: 'tcp://:9091'
+
+log:
+  level: 'debug'
+
+totp:
+  issuer: 'orangepebble.net'
+
+authentication_backend:
+  file:
+    path: '/config/users_database.yml'
+
+access_control:
+  default_policy: 'deny'
+  rules:
+    # Rules applied to everyone
+    - domain: '*.orangepebble.net'
+      policy: 'bypass'
+    - domain: '*.casa.pt'
+      policy: 'bypass'
+
+session:
+  cookies:
+    - name: 'authelia_session'
+      domain: 'orangepebble.net' # Should match whatever your root protected domain is
+      authelia_url: 'https://auth.orangepebble.net'
+      expiration: '1 hour'
+      inactivity: '5 minutes'
+    - name: 'authelia_session'
+      domain: 'casa.pt' # Should match whatever your root protected domain is
+      authelia_url: 'https://auth.casa.pt'
+      expiration: '1 hour'
+      inactivity: '5 minutes'
+
+  redis:
+    host: 'redis'
+    port: 6379
+
+regulation:
+  max_retries: 3
+  find_time: '2 minutes'
+  ban_time: '5 minutes'
+
+storage:
+  postgres:
+    address: 'tcp://postgres:5432'
+    username: 'authelia'
+    database: 'authelia'
+
+notifier:
+  smtp:
+    address: 'smtp://smtp.gmail.com:25'
+    username: 'orangepebbleauth@gmail.com'
+    sender: 'OrangePebble Auth <auth@orangepebble.com>'
+    subject: 'OrangePebble Auth {title}'
+...

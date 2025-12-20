@@ -22,10 +22,6 @@ blocking:
     default:
       - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/domains/pro.txt
       - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/domains/tif.txt
-  allowlists:
-    default:
-      - |
-        hiltontechservices.com
   clientGroupsBlock:
     default:
       - default
