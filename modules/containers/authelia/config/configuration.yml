@@ -34,7 +34,6 @@ session:
       authelia_url: 'https://auth.casa.pt'
       expiration: '1 hour'
       inactivity: '5 minutes'
-
   redis:
     host: 'redis'
     port: 6379
@@ -52,7 +51,7 @@ storage:
 
 notifier:
   smtp:
-    address: 'smtp://smtp.gmail.com:25'
+    address: 'submission://smtp.gmail.com:587'
     username: 'orangepebbleauth@gmail.com'
     sender: 'OrangePebble Auth <auth@orangepebble.com>'
     subject: 'OrangePebble Auth {title}'

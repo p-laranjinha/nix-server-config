@@ -68,12 +68,14 @@ in {
           swag-homepage = {};
           swag-immich = {};
           swag-copyparty = {};
+          swag-authelia = {};
         };
         containers = {
           searxng.containerConfig.networks = ["swag-searxng"];
           homepage.containerConfig.networks = ["swag-homepage"];
           immich.containerConfig.networks = ["swag-immich"];
           copyparty.containerConfig.networks = ["swag-copyparty"];
+          authelia.containerConfig.networks = ["swag-authelia"];
           swag = funcs.containers.mkConfig "root" localVars {
             autoStart = config.opts.containers.swag.autoStart;
             serviceConfig = {
@@ -110,6 +112,7 @@ in {
                 "swag-homepage"
                 "swag-immich"
                 "swag-copyparty"
+                "swag-authelia"
                 # WARN: Everytime you change this, you need to remove
                 #  '${defaultConfigDir}/nginx/resolver.conf' or else the
                 #  new networks aren't used.
