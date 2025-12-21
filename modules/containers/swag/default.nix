@@ -64,70 +64,65 @@ in {
       group = localVars.mainGroup;
     };
     networking.firewall.allowedTCPPorts = [80 443];
-    hm = {
+    hm = let
+      networks = {
+        # container = "network"
+        searxng = "swag-searxng";
+        homepage = "swag-homepage";
+        immich = "swag-immich";
+        copyparty = "swag-copyparty";
+        authelia = "swag-authelia";
+        lldap = "swag-lldap";
+        # WARN: Everytime you change this, you need to remove
+        #  '${defaultConfigDir}/nginx/resolver.conf' or else the
+        #  new networks aren't used.
+      };
+    in {
       virtualisation.quadlet = {
-        networks = {
-          swag-searxng = {};
-          swag-homepage = {};
-          swag-immich = {};
-          swag-copyparty = {};
-          swag-authelia = {};
-          swag-lldap = {};
-        };
-        containers = {
-          searxng.containerConfig.networks = ["swag-searxng"];
-          homepage.containerConfig.networks = ["swag-homepage"];
-          immich.containerConfig.networks = ["swag-immich"];
-          copyparty.containerConfig.networks = ["swag-copyparty"];
-          authelia.containerConfig.networks = ["swag-authelia"];
-          lldap.containerConfig.networks = ["swag-lldap"];
-          swag = funcs.containers.mkConfig "root" localVars {
-            autoStart = config.opts.containers.swag.autoStart;
-            serviceConfig = {
-              RestartSec = "10";
-              Restart = "always";
-            };
-            containerConfig = {
-              image = swagImage;
-              publishPorts = [
-                "443:443"
-                "80:80"
-              ];
-              environments = {
-                PUID = containerPUID;
-                PGID = funcs.containers.getContainerGid localVars.mainGroup;
-                TZ = "Europe/Lisbon";
-                URL = "orangepebble.net";
-                SUBDOMAINS = "wildcard";
-                VALIDATION = "dns";
-                DNSPLUGIN = "porkbun";
+        containers =
+          {
+            swag = funcs.containers.mkConfig "root" localVars {
+              autoStart = config.opts.containers.swag.autoStart;
+              serviceConfig = {
+                RestartSec = "10";
+                Restart = "always";
               };
-              volumes = [
-                "${defaultConfigDir}:/config"
-                "${config.secrets.certbot-porkbun.path}:${config.secrets.certbot-porkbun.path}"
-                "${nginxConfFile.source}:${nginxConfFile.source}"
-                "${autheliaConfFile.source}:${autheliaConfFile.source}"
-                "${homepageConfFile.source}:${homepageConfFile.source}"
-                "${searxngConfFile.source}:${searxngConfFile.source}"
-                "${immichConfFile.source}:${immichConfFile.source}"
-                "${copypartyConfFile.source}:${copypartyConfFile.source}"
-                "${lldapConfFile.source}:${lldapConfFile.source}"
-              ];
-              networks = [
-                "swag-searxng"
-                "swag-homepage"
-                "swag-immich"
-                "swag-copyparty"
-                "swag-authelia"
-                "swag-lldap"
-                # WARN: Everytime you change this, you need to remove
-                #  '${defaultConfigDir}/nginx/resolver.conf' or else the
-                #  new networks aren't used.
-              ];
-              addCapabilities = ["NET_ADMIN"];
+              containerConfig = {
+                image = swagImage;
+                publishPorts = [
+                  "443:443"
+                  "80:80"
+                ];
+                environments = {
+                  PUID = containerPUID;
+                  PGID = funcs.containers.getContainerGid localVars.mainGroup;
+                  TZ = "Europe/Lisbon";
+                  URL = "orangepebble.net";
+                  SUBDOMAINS = "wildcard";
+                  VALIDATION = "dns";
+                  DNSPLUGIN = "porkbun";
+                };
+                volumes = [
+                  "${defaultConfigDir}:/config"
+                  "${config.secrets.certbot-porkbun.path}:${config.secrets.certbot-porkbun.path}"
+                  "${nginxConfFile.source}:${nginxConfFile.source}"
+                  "${autheliaConfFile.source}:${autheliaConfFile.source}"
+                  "${homepageConfFile.source}:${homepageConfFile.source}"
+                  "${searxngConfFile.source}:${searxngConfFile.source}"
+                  "${immichConfFile.source}:${immichConfFile.source}"
+                  "${copypartyConfFile.source}:${copypartyConfFile.source}"
+                  "${lldapConfFile.source}:${lldapConfFile.source}"
+                ];
+                networks = builtins.attrValues networks;
+                addCapabilities = ["NET_ADMIN"];
+              };
             };
-          };
-        };
+          }
+          // (builtins.mapAttrs (_: value: {containerConfig.networks = [value];}) networks);
+        networks = builtins.listToAttrs (map (x: {
+          name = x;
+          value = {};
+        }) (builtins.attrValues networks));
       };
     };
   };
