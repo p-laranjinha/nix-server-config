@@ -12,6 +12,8 @@
   symlinks = {
     "${defaultConfigDir}/dns-conf/porkbun.ini" = toString config.secrets.certbot-porkbun.path;
     "${defaultConfigDir}/nginx/site-confs/default.conf" = "${configDir}/default.conf";
+    "${defaultConfigDir}/nginx/nginx.conf" = "${configDir}/nginx.conf";
+    "${defaultConfigDir}/nginx/proxy-confs/dashboard.subdomain.conf" = "${configDir}/dashboard.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/authelia.subdomain.conf" = "${configDir}/authelia.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/homepage.subdomain.conf" = "${configDir}/homepage.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/searxng.subdomain.conf" = "${configDir}/searxng.subdomain.conf";
@@ -91,7 +93,7 @@ in {
                   SUBDOMAINS = "wildcard";
                   VALIDATION = "dns";
                   DNSPLUGIN = "porkbun";
-                  # DOCKER_MODS = "linuxserver/mods:swag-dbip|linuxserver/mods:swag-crowdsec|linuxserver/mods:swag-dashboard";
+                  DOCKER_MODS = "linuxserver/mods:swag-dashboard|linuxserver/mods:swag-dbip";
                 };
                 volumes =
                   [

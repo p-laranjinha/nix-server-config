@@ -27,20 +27,23 @@ access_control:
   default_policy: 'deny'
   # https://www.authelia.com/configuration/security/access-control/#rule-matching
   rules:
-    - domain: 'ldap.orangepebble.net'
+    - domain:
+        - 'ldap.orangepebble.net'
+        - 'dashboard.orangepebble.net'
       policy: 'two_factor'
       subject:
         - ['user:pedro']
-    - domain: 'ldap.orangepebble.net'
-      policy: 'deny'
 
     - domain: 'search.orangepebble.net'
       policy: 'bypass'
 
-    - domain:
-        - '*.orangepebble.net'
-        - 'orangepebble.net'
-      policy: 'two_factor'
+    # Best way to do ACL safely is to only give access to what's specifically
+    #  defined. That way I can't forget to revoke access to private subdomains.
+    #  If I don't forget to add authelia to swag that is.
+    # - domain:
+    #     - '*.orangepebble.net'
+    #     - 'orangepebble.net'
+    #   policy: 'two_factor'
 
 session:
   cookies:
