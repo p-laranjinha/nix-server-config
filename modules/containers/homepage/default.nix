@@ -36,7 +36,7 @@ in {
               image = homepageImage;
               # publishPorts = ["3000:3000"];
               environments = {
-                HOMEPAGE_ALLOWED_HOSTS = "home.orangepebble.net,homepage.orangepebble.net,home.casa.pt,homepage.casa.pt";
+                HOMEPAGE_ALLOWED_HOSTS = "home.orangepebble.net";
               };
               volumes = [
                 "${configDir}:/app/config"

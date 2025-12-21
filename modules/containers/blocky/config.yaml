@@ -15,7 +15,6 @@ upstreams:
 customDNS:
   mapping:
     orangepebble.net: 192.168.1.4
-    casa.pt: 192.168.1.4
 
 blocking:
   denylists:

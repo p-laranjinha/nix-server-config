@@ -99,7 +99,7 @@ in {
                 DB_STORAGE_TYPE = "HDD";
               };
               volumes = [
-                "${databaseDataDir}:/var/lib/postresql/data"
+                "${databaseDataDir}:/var/lib/postgresql"
               ];
               shmSize = "128mb";
               networks = ["immich"];

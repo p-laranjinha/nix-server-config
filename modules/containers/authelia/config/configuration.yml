@@ -21,8 +21,10 @@ access_control:
   rules:
     # Rules applied to everyone
     - domain: '*.orangepebble.net'
-      policy: 'bypass'
-    - domain: '*.casa.pt'
+      policy: 'one_factor'
+    - domain: 'ldap.orangepebble.net'
+      policy: 'two_factor'
+    - domain: 'search.orangepebble.net'
       policy: 'bypass'
 
 session:
@@ -30,11 +32,6 @@ session:
     - name: 'authelia_session'
       domain: 'orangepebble.net' # Should match whatever your root protected domain is
       authelia_url: 'https://auth.orangepebble.net'
-      expiration: '1 hour'
-      inactivity: '5 minutes'
-    - name: 'authelia_session'
-      domain: 'casa.pt' # Should match whatever your root protected domain is
-      authelia_url: 'https://auth.casa.pt'
       expiration: '1 hour'
       inactivity: '5 minutes'
   redis:

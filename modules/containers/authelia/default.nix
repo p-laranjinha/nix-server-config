@@ -59,7 +59,7 @@ in {
         containers = {
           authelia = funcs.containers.mkConfig "root" localVars.authelia {
             autoStart = config.opts.containers.authelia.autoStart;
-            unitConfig.Requires = "authelia-valkey.container authelia-postgres.container";
+            unitConfig.Requires = "lldap.container authelia-valkey.container authelia-postgres.container";
             containerConfig = let
               secretValues = builtins.zipAttrsWith (name: values:
                 if name == "environments"
@@ -105,7 +105,7 @@ in {
                 DB_STORAGE_TYPE = "HDD";
               };
               volumes = [
-                "${postgresDataDir}:/var/lib/postresql/data"
+                "${postgresDataDir}:/var/lib/postgresql"
               ];
               shmSize = "128mb";
               networkAliases = ["postgres"];

@@ -113,7 +113,7 @@ in {
                 DB_STORAGE_TYPE = "HDD";
               };
               volumes = [
-                "${postgresDataDir}:/var/lib/postresql/data"
+                "${postgresDataDir}:/var/lib/postgresql"
               ];
               shmSize = "128mb";
               networkAliases = ["lldap-db"];
