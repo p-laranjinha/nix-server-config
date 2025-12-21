@@ -14,7 +14,7 @@ authentication_backend:
     implementation: 'lldap'
     address: 'ldap://lldap:3890'
     base_dn: 'DC=orangepebble,DC=net'
-    user: 'UID=admin,OU=people,DC=orangepebble,DC=net'
+    user: 'UID=authelia,OU=people,DC=orangepebble,DC=net'
 
 access_control:
   default_policy: 'deny'
@@ -56,5 +56,5 @@ notifier:
   smtp:
     address: 'submission://smtp.gmail.com:587'
     username: 'orangepebbleauth@gmail.com'
-    sender: 'OrangePebble Auth <auth@orangepebble.com>'
-    subject: 'OrangePebble Auth {title}'
+    sender: 'OrangePebbleAuth <orangepebbleauth@gmail.com>'
+    subject: 'OrangePebbleAuth - {title}'

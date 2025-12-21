@@ -21,6 +21,8 @@ in {
     systemd.tmpfiles.rules = [
       "d ${bootstrapDir} 2770 ${vars.username} ${localVars.lldap.mainGroup} - -"
       "Z ${bootstrapDir}/* 770 ${vars.username} ${localVars.lldap.mainGroup} - -"
+      "d ${bootstrapDir}/user-configs 770 ${vars.username} ${localVars.lldap.mainGroup} - -"
+      "L+ ${bootstrapDir}/user-configs/authelia.json - - - - ${config.secrets.lldap-authelia-user.path}"
       "d ${vars.containers.dataDir}/lldap 2770 ${vars.username} ${localVars.lldap.mainGroup} - -"
       "d ${postgresDataDir} 2770 ${vars.username} ${localVars.lldap-postgres.mainGroup} - -"
     ];
@@ -42,6 +44,10 @@ in {
       lldap-jwt-secret.sopsFile = ./secrets/jwt-secret;
       lldap-key-seed.sopsFile = ./secrets/key-seed;
       lldap-ldap-user-pass.sopsFile = ./secrets/ldap-user-pass;
+      lldap-authelia-user = {
+        sopsFile = ./secrets/authelia-user.json;
+        format = "json";
+      };
     };
     hm = {
       virtualisation.quadlet = {
@@ -80,14 +86,17 @@ in {
 
                   # For bootstrapping (running a script to declaratively setup admin, users, and groups):
                   # `podman exec -ti lldap bash /bootstrap/bootstrap.sh`
-                  LLDAP_ADMIN_PASSWORD_FILE = config.secrets.lldap-ldap-user-pass.path;
+                  # Should be removed after bootstrapping for less attack vectors.
+                  # LLDAP_ADMIN_PASSWORD_FILE = config.secrets.lldap-ldap-user-pass.path;
                 }
                 // secretValues.environments;
               volumes =
                 [
                   # For bootstrapping (running a script to declaratively setup admin, users, and groups):
                   # `podman exec -ti lldap bash /bootstrap/bootstrap.sh`
-                  "${bootstrapDir}:/bootstrap:ro"
+                  # Should be removed after bootstrapping for less attack vectors.
+                  # "${bootstrapDir}:/bootstrap:ro"
+                  # "${config.secrets.lldap-authelia-user.path}:${config.secrets.lldap-authelia-user.path}"
                 ]
                 ++ secretValues.volumes;
               networks = ["lldap" "lldap-authelia"];

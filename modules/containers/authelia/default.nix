@@ -52,7 +52,7 @@ in {
         format = "dotenv";
         group = localVars.authelia-postgres.mainGroup;
       };
-      authelia-ldap-password.sopsFile = ../lldap/secrets/ldap-user-pass;
+      authelia-ldap-password.sopsFile = ./secrets/ldap-password;
     };
     hm = {
       virtualisation.quadlet = {
