@@ -15,17 +15,32 @@ authentication_backend:
     address: 'ldap://lldap:3890'
     base_dn: 'DC=orangepebble,DC=net'
     user: 'UID=authelia,OU=people,DC=orangepebble,DC=net'
+    # Removing access to the 'authelia' user used by Authelia in the backend
+    #  to change user passwords (and probably other things) because it doesn't
+    #  need to be logged into.
+    # Also removing access to the default lldap 'admin' account.
+    # Default 'users_filter': from https://www.authelia.com/integration/ldap/lldap/
+    # Cheatsheet: https://gist.github.com/jonlabelle/0f8ec20c2474084325a89bc5362008a7
+    users_filter: (&(|({username_attribute}={input})({mail_attribute}={input}))(objectClass=person)(!({username_attribute}=authelia))(!({username_attribute}=admin)))
 
 access_control:
   default_policy: 'deny'
+  # https://www.authelia.com/configuration/security/access-control/#rule-matching
   rules:
-    # Rules applied to everyone
-    - domain: '*.orangepebble.net'
-      policy: 'one_factor'
     - domain: 'ldap.orangepebble.net'
       policy: 'two_factor'
+      subject:
+        - ['user:pedro']
+    - domain: 'ldap.orangepebble.net'
+      policy: 'deny'
+
     - domain: 'search.orangepebble.net'
       policy: 'bypass'
+
+    - domain:
+        - '*.orangepebble.net'
+        - 'orangepebble.net'
+      policy: 'two_factor'
 
 session:
   cookies:
