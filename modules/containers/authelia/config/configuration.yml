@@ -35,7 +35,7 @@ access_control:
         - ['user:pedro']
 
     - domain: 'search.orangepebble.net'
-      policy: 'bypass'
+      policy: 'one_factor'
 
     # Best way to do ACL safely is to only give access to what's specifically
     #  defined. That way I can't forget to revoke access to private subdomains.

@@ -1,0 +1,6 @@
+ingress:
+  - hostname: orangepebble.net
+    service: https://orangepebble.net
+  - hostname: "*.orangepebble.net"
+    service: https://orangepebble.net
+  - service: http_status:404
