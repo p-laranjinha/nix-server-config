@@ -11,10 +11,18 @@
   defaultConfigDir = "${vars.containers.dataDir}/swag/config";
   modCacheDir = "${vars.containers.dataDir}/swag/modcache";
   symlinks = {
+    # This symlink gets turned into a regular file when swag starts up, so to
+    #  modify it you'll have to recreate the symlink by either restarting or
+    #  running `systemd-tmpfiles --create`.
+    "${defaultConfigDir}/nginx/nginx.conf" = "${configDir}/nginx.conf";
+
     "${defaultConfigDir}/dns-conf/porkbun.ini" = toString config.secrets.certbot-porkbun.path;
     "${defaultConfigDir}/tunnelconfig.yml" = "${configDir}/tunnelconfig.yml";
     "${defaultConfigDir}/nginx/site-confs/default.conf" = "${configDir}/default.conf";
-    "${defaultConfigDir}/nginx/nginx.conf" = "${configDir}/nginx.conf";
+    "${defaultConfigDir}/nginx/ssl.conf" = "${configDir}/ssl.conf";
+    "${defaultConfigDir}/nginx/dbip.conf" = "${configDir}/dbip.conf";
+    "${defaultConfigDir}/dbip-blocks.conf" = "${configDir}/dbip-blocks.conf";
+    "${defaultConfigDir}/internal-only.conf" = "${configDir}/internal-only.conf";
     "${defaultConfigDir}/nginx/proxy-confs/dashboard.subdomain.conf" = "${configDir}/dashboard.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/authelia.subdomain.conf" = "${configDir}/authelia.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/homepage.subdomain.conf" = "${configDir}/homepage.subdomain.conf";
@@ -110,8 +118,21 @@ in {
                   SUBDOMAINS = "wildcard";
                   VALIDATION = "dns";
                   DNSPLUGIN = "porkbun";
-                  DOCKER_MODS = "linuxserver/mods:swag-dashboard|linuxserver/mods:swag-dbip|linuxserver/mods:universal-cloudflared";
+                  DOCKER_MODS = "linuxserver/mods:swag-dashboard|linuxserver/mods:swag-dbip|linuxserver/mods:universal-cloudflared|linuxserver/mods:swag-cloudflare-real-ip";
                   # https://www.linuxserver.io/blog/zero-trust-hosting-and-reverse-proxy-via-cloudflare-swag-and-authelia
+                  # The only thing I've changed in the cloudflare dashboard
+                  #  (besides the required settings for the tunnel) was to
+                  #  to create a caching rule to bypass all caching. Both so
+                  #  that personal things aren't cached and because its against
+                  #  their TOS to cache things like piracy.
+                  # I'm not totally confortable with the way the cloudflare
+                  #  tunnel decrypts everything on the cloudflare servers, but
+                  #  it does mitigate attacks substantially.
+                  # The worst case scenario with cloudflare is that they
+                  #  collect personal data and maybe ban me, the worst case
+                  #  scenario with port forwarding is being DDoSed and malicious
+                  #  actors finding vulnerabilities with my router and config
+                  #  and losing my data, which is substantially worse.
                   CF_TUNNEL_NAME = "server";
                   FILE__CF_TUNNEL_CONFIG = "/config/tunnelconfig.yml";
                 };

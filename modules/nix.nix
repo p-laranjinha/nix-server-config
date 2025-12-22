@@ -70,7 +70,17 @@
 
   networking.interfaces.enp9s0.wakeOnLan.enable = true;
 
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    extraSetFlags = [
+      "--advertise-exit-node"
+      "--advertise-routes=192.168.1.0/24"
+    ];
+  };
+  # Makes the server work lik a subnet router.
+  # Required to be a tailscale exit node.
+  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
+  boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
 
   system.stateVersion = vars.stateVersion;
 }
