@@ -73,27 +73,26 @@ in {
 # I'm using the blocklists from 'https://github.com/hagezi/dns-blocklists' as
 #  they seem popular and well regarded. This is also where I found the DNS
 #  server alternatives.
-# I've thought about hosting a recursive DNS myself, so that I'm not dependent
-#  on public DNS (that may track personal information and block websites I may
-#  want to visit, like piracy ones), but that's apparently pretty resource
-#  intensive, can be slow, and I don't want my family's internet to be
-#  dependent on whether my server is working.
-# Although the internet not being dependent on the server would require not
-#  setting a secondary DNS server on my router, and I'm not sure how that would
-#  affect url redirections to my server.
-# I've found some public and free DNS servers that both blocked ads/etc and
-#  seemed private:
-#   - Control D : https://controld.com/free-dns
+# I'll maybe host a recursive DNS myself, as if the server isn't working my
+#  family can still use the router's secondary DNS, but it is quite resource
+#  intensive and slow on first request, and not that big of a privacy plus
+#  as there are public and free DNS servers that at least say they're private.
+# Here are some of the public, free, and private DNS servers I've found:
+#   - Cloudflare : https://one.one.one.one/dns/
 #   - Mullvad : https://mullvad.net/en/help/dns-over-https-and-dns-over-tls
+#   - Control D : https://controld.com/free-dns
 #   - Quad9 : https://quad9.net
 #   - AdGuard : https://adguard-dns.io/en/public-dns.html
-# Of these free DNS servers the ones I think are the most performant are (in
-#  order): Control D, Mullvad, Quad9, AdGuard.
-#  Mullvad is by far the most consistent, but Control D is faster most of the
-#   times with some rarer slow outliers, and Quad9 wildy fluctuates between
-#   being the faster or the slowest between all others.
-#  For some reason I lean towards Mullvad, even though it isn't the fastest,
-#   but I'll primarily use Control D.
+# All of these DNS servers have versions that block ads/malware, but I won't
+#  use them in order to have more control over what's blocked.
+# Of these free DNS servers, according to my testing, the fastest ones are (in
+#  order): Cloudflare, Control D, Mullvad, Quad9, AdGuard.
+# I've tried mainly using Control D, but it stopped working properly.
+# Cloudflare is the only one from a BIG for profit company, but their website
+#  does say they don't log things and are private (and they're not known to be
+#  scummy). Also, I'm using a Cloudflare Tunnel to expose my services, and that
+#  is trusting Cloudflare on another level, so if I'm trusting it the tunnel
+#  I might as well trust the DNS.
 # https://www.reddit.com/r/pihole/comments/1ajunoc/whats_the_difference_between_dns_in_dhcp_server/
 #  I can set DNS servers on two different spots in my router, on the DHCP server
 #  and on the Internet section. The difference between the 2 is that those on
@@ -104,8 +103,7 @@ in {
 # Now, if I want the absolute certainty that all DNS requests pass through my
 #  server, I have to set all DNS servers on the DHCP server to my server. But
 #  this makes it so that when the server goes down, DNS is down, and there is
-#  no internet. So if I want redundancy, I'll need to leave the secondary DNS
-#  server field empty on the DHCP server, but depending on how the client (PC,
-#  phone, etc) handle primary and secondary DNS servers, the DNS server on my
-#  server may never be used.
+#  no internet.
+#  So, in order to have redundancy, I'll just leave the secondary DNS server
+#   on the DHCP server empty, which has been working fine.
 

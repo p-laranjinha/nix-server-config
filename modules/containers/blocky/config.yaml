@@ -7,8 +7,8 @@ upstreams:
     strategy: fast
   groups:
     default:
-      # Control D (DNS over HTTPS)
-      - https://freedns.controld.com/p0
+      # Cloudflare (DNS over HTTPS)
+      - https://cloudflare-dns.com/dns-query
       # Mullvad (DNS over HTTPS)
       - https://dns.mullvad.net/dns-query
 
