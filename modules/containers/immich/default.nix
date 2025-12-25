@@ -8,9 +8,9 @@
 }: let
   localVars = vars.containers.containers;
   # Obtained versions from the release 'docker-compose.yml'.
-  immichImage = "ghcr.io/immich-app/immich-server:v2.3.1";
-  machineLearningImage = "ghcr.io/immich-app/immich-machine-learning:v2.3.1";
-  redisImage = "ghcr.io/valkey-io/valkey:8.1.5";
+  immichImage = "ghcr.io/immich-app/immich-server:v2.4.1";
+  machineLearningImage = "ghcr.io/immich-app/immich-machine-learning:v2.4.1";
+  redisImage = "ghcr.io/valkey-io/valkey:9.0.1";
   databaseImage = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0";
 
   immichUploadDir = "${vars.containers.publicDir}/images";
@@ -20,7 +20,6 @@
   env = {
     TZ = "Europe/Lisbon";
     DB_USERNAME = "postgres";
-    DB_PASSWORD = "postgres"; # TODO: change to use a sops encrypted password
     DB_DATABASE_NAME = "immich";
   };
 in {
@@ -46,6 +45,28 @@ in {
       "Z ${vars.containers.dataDir}/immich/database 2770 ${vars.username} ${localVars.immich-database.mainGroup} - -"
       "Z ${vars.containers.dataDir}/immich/machine-learning 2770 ${vars.username} ${localVars.immich-machine-learning.mainGroup} - -"
     ];
+    secrets = builtins.mapAttrs (_: value:
+      {
+        format = "binary";
+        # Entire file.
+        key = "";
+        # Only the user and group can read and nothing else.
+        mode = "0440";
+        owner = vars.username;
+        group = localVars.immich.mainGroup;
+      }
+      // value) {
+      immich-postgres-password = {
+        sopsFile = ./secrets/postgres-password.env;
+        format = "dotenv";
+      };
+      # It is a bit annoying to have to always use sops to edit this file but
+      #  its the easiest way to encrypt the secrets within.
+      immich-config-file = {
+        sopsFile = ./secrets/immich.json;
+        format = "json";
+      };
+    };
     hm = {
       virtualisation.quadlet = {
         # https://github.com/linux-universe/immich-podman-quadlets
@@ -62,10 +83,16 @@ in {
             containerConfig = {
               image = immichImage;
               # publishPorts = ["2283:2283"];
-              environments = env;
+              environments =
+                {
+                  IMMICH_CONFIG_FILE = config.secrets.immich-config-file.path;
+                }
+                // env;
+              environmentFiles = [config.secrets.immich-postgres-password.path];
               volumes = [
                 "${immichUploadDir}:/data"
                 "/etc/localtime:/etc/localtime:ro"
+                "${config.secrets.immich-config-file.path}:${config.secrets.immich-config-file.path}"
               ];
               networks = ["immich"];
             };
@@ -93,11 +120,11 @@ in {
               image = databaseImage;
               environments = {
                 POSTGRES_USER = env.DB_USERNAME;
-                POSTGRES_PASSWORD = env.DB_PASSWORD;
                 POSTGRES_DB = env.DB_DATABASE_NAME;
                 POSTGRES_INITDB_ARGS = "--data-checksums";
                 DB_STORAGE_TYPE = "HDD";
               };
+              environmentFiles = [config.secrets.immich-postgres-password.path];
               volumes = [
                 "${databaseDataDir}:/var/lib/postgresql"
               ];

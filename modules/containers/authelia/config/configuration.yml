@@ -9,20 +9,6 @@ log:
 totp:
   issuer: 'orangepebble.net'
 
-authentication_backend:
-  ldap:
-    implementation: 'lldap'
-    address: 'ldap://lldap:3890'
-    base_dn: 'DC=orangepebble,DC=net'
-    user: 'UID=authelia,OU=people,DC=orangepebble,DC=net'
-    # Removing access to the 'authelia' user used by Authelia in the backend
-    #  to change user passwords (and probably other things) because it doesn't
-    #  need to be logged into.
-    # Also removing access to the default lldap 'admin' account.
-    # Default 'users_filter': from https://www.authelia.com/integration/ldap/lldap/
-    # Cheatsheet: https://gist.github.com/jonlabelle/0f8ec20c2474084325a89bc5362008a7
-    users_filter: (&(|({username_attribute}={input})({mail_attribute}={input}))(objectClass=person)(!({username_attribute}=authelia))(!({username_attribute}=admin)))
-
 access_control:
   default_policy: 'deny'
   # https://www.authelia.com/configuration/security/access-control/#rule-matching
@@ -30,6 +16,7 @@ access_control:
     - domain:
         - 'ldap.orangepebble.net'
         - 'dashboard.orangepebble.net'
+        - 'images.orangepebble.net'
       policy: 'two_factor'
       subject:
         - ['user:pedro']
@@ -44,6 +31,67 @@ access_control:
     #     - '*.orangepebble.net'
     #     - 'orangepebble.net'
     #   policy: 'two_factor'
+
+identity_providers:
+  oidc:
+    jwks:
+      - key: {{ secret (mustEnv "OIDC_JWKS_KEY_FILE") | mindent 10 "|" | msquote }}
+    # The 'immich_quota' is to be able to set a user's storage quota.
+    claims_policies:
+      immich_policy:
+        custom_claims:
+          immich_quota:
+            attribute: 'immich_quota'
+    scopes:
+      immich_scope:
+        claims:
+          - 'immich_quota'
+    clients:
+      - client_id: 'immich'
+        client_name: 'immich'
+        authorization_policy: 'two_factor'
+        # The digest of 'insecure_secret'.
+        # Generated using `authelia crypto hash generate pbkdf2 --variant sha512 --random --random.length 72 --random.charset rfc3986`.
+        client_secret: '$pbkdf2-sha512$310000$D2MkioGCj5SZbULAMyTixQ$QFENPGLjD5p4fUvzwzgfXRCm54LuydzV7r.FWI0saqJqTnnmBJeR4.buggGYAoLI3lX431ptpWdU3nMherCqjA'
+        public: false
+        require_pkce: false
+        pkce_challenge_method: ''
+        redirect_uris:
+          - 'https://images.orangepebble.net/auth/login'
+          - 'https://images.orangepebble.net/user-settings'
+          - 'app.immich:///oauth-callback'
+        scopes:
+          - 'openid'
+          - 'profile'
+          - 'email'
+          - 'immich_scope'
+        claims_policy: 'immich_policy'
+        response_types:
+          - 'code'
+        grant_types:
+          - 'authorization_code'
+        userinfo_signed_response_alg: 'RS256'
+        token_endpoint_auth_method: 'client_secret_post'
+
+authentication_backend:
+  ldap:
+    implementation: 'lldap'
+    address: 'ldap://lldap:3890'
+    base_dn: 'DC=orangepebble,DC=net'
+    user: 'UID=authelia,OU=people,DC=orangepebble,DC=net'
+    # Removing access to the 'authelia' user used by Authelia in the backend
+    #  to change user passwords (and probably other things) because it doesn't
+    #  need to be logged into.
+    # Also removing access to the default lldap 'admin' account.
+    # Default 'users_filter': from https://www.authelia.com/integration/ldap/lldap/
+    # Cheatsheet: https://gist.github.com/jonlabelle/0f8ec20c2474084325a89bc5362008a7
+    users_filter: (&(|({username_attribute}={input})({mail_attribute}={input}))(objectClass=person)(!({username_attribute}=authelia))(!({username_attribute}=admin)))
+    attributes:
+      extra:
+        immichquota: # The attribute name from LDAP
+          name: 'immich_quota'
+          multi_valued: false
+          value_type: 'integer'
 
 session:
   cookies:

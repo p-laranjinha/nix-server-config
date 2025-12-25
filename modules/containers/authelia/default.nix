@@ -53,6 +53,10 @@ in {
         group = localVars.authelia-postgres.mainGroup;
       };
       authelia-ldap-password.sopsFile = ./secrets/ldap-password;
+      # Obtained by running:
+      #  `authelia crypto pair rsa generate`
+      #  `sops -e private.pem > <file path/name>`
+      authelia-oidc-jwks-key.sopsFile = ./secrets/oidc-jwks-key.pem;
     };
     hm = {
       virtualisation.quadlet = {
@@ -76,10 +80,18 @@ in {
                   AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE = config.secrets.authelia-STORAGE_ENCRYPTION_KEY.path;
                   AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE = config.secrets.authelia-SMTP_PASSWORD.path;
                   AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE = config.secrets.authelia-ldap-password.path;
+                  OIDC_JWKS_KEY_FILE = config.secrets.authelia-oidc-jwks-key.path;
                 }));
             in {
               image = autheliaImage;
-              environments = secretValues.environments;
+              environments =
+                {
+                  # https://www.authelia.com/configuration/methods/files/#file-filters
+                  # Allows for templates that use the Go template engine in the
+                  #  YAML configuration file.
+                  X_AUTHELIA_CONFIG_FILTERS = "template";
+                }
+                // secretValues.environments;
               volumes = ["${configDir}:/config"] ++ secretValues.volumes;
               networks = ["authelia"];
             };

@@ -87,7 +87,7 @@ in {
                   # For bootstrapping (running a script to declaratively setup admin, users, and groups):
                   # `podman exec -ti lldap bash /bootstrap/bootstrap.sh`
                   # Should be removed after bootstrapping for less attack vectors.
-                  LLDAP_ADMIN_PASSWORD_FILE = config.secrets.lldap-ldap-user-pass.path;
+                  # LLDAP_ADMIN_PASSWORD_FILE = config.secrets.lldap-ldap-user-pass.path;
                 }
                 // secretValues.environments;
               volumes =
@@ -95,8 +95,8 @@ in {
                   # For bootstrapping (running a script to declaratively setup admin, users, and groups):
                   # `podman exec -ti lldap bash /bootstrap/bootstrap.sh`
                   # Should be removed after bootstrapping for less attack vectors.
-                  "${bootstrapDir}:/bootstrap:ro"
-                  "${config.secrets.lldap-authelia-user.path}:${config.secrets.lldap-authelia-user.path}"
+                  # "${bootstrapDir}:/bootstrap:ro"
+                  # "${config.secrets.lldap-authelia-user.path}:${config.secrets.lldap-authelia-user.path}"
                 ]
                 ++ secretValues.volumes;
               networks = ["lldap" "lldap-authelia"];

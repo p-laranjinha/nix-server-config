@@ -45,7 +45,7 @@ in
       homepage.autoStart = true;
       blocky.autoStart = true;
       copyparty.autoStart = true;
-      # immich.autoStart = true;
+      immich.autoStart = true;
       swag.autoStart = true;
       authelia.autoStart = true;
       lldap.autoStart = true;

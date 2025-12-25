@@ -118,7 +118,8 @@ in {
                   SUBDOMAINS = "wildcard";
                   VALIDATION = "dns";
                   DNSPLUGIN = "porkbun";
-                  DOCKER_MODS = "linuxserver/mods:swag-dashboard|linuxserver/mods:swag-dbip|linuxserver/mods:universal-cloudflared|linuxserver/mods:swag-cloudflare-real-ip";
+                  DOCKER_MODS = "linuxserver/mods:swag-dashboard|linuxserver/mods:swag-dbip";
+                  # DOCKER_MODS = "linuxserver/mods:swag-dashboard|linuxserver/mods:swag-dbip|linuxserver/mods:universal-cloudflared|linuxserver/mods:swag-cloudflare-real-ip";
                   # https://www.linuxserver.io/blog/zero-trust-hosting-and-reverse-proxy-via-cloudflare-swag-and-authelia
                   # The only thing I've changed in the cloudflare dashboard
                   #  (besides the required settings for the tunnel) was to
