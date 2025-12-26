@@ -4,7 +4,7 @@ server:
   address: 'tcp://:9091'
 
 log:
-  level: 'debug'
+  level: 'trace'
 
 totp:
   issuer: 'orangepebble.net'
@@ -16,13 +16,18 @@ access_control:
     - domain:
         - 'ldap.orangepebble.net'
         - 'dashboard.orangepebble.net'
-        - 'images.orangepebble.net'
       policy: 'two_factor'
       subject:
         - ['user:pedro']
 
-    - domain: 'search.orangepebble.net'
+    - domain:
+        - 'search.orangepebble.net'
       policy: 'one_factor'
+
+    - domain:
+        # Uses Authelia as OAuth but shouldn't be behind it.
+        - 'gallery.orangepebble.net'
+      policy: 'bypass'
 
     # Best way to do ACL safely is to only give access to what's specifically
     #  defined. That way I can't forget to revoke access to private subdomains.
@@ -57,8 +62,8 @@ identity_providers:
         require_pkce: false
         pkce_challenge_method: ''
         redirect_uris:
-          - 'https://images.orangepebble.net/auth/login'
-          - 'https://images.orangepebble.net/user-settings'
+          - 'https://gallery.orangepebble.net/auth/login'
+          - 'https://gallery.orangepebble.net/user-settings'
           - 'app.immich:///oauth-callback'
         scopes:
           - 'openid'

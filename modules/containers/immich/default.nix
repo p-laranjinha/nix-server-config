@@ -13,7 +13,7 @@
   redisImage = "ghcr.io/valkey-io/valkey:9.0.1";
   databaseImage = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0";
 
-  immichUploadDir = "${vars.containers.publicDir}/images";
+  immichUploadDir = "${vars.containers.publicDir}/gallery";
   databaseDataDir = "${vars.containers.dataDir}/immich/database/data";
   machineLearningCacheDir = "${vars.containers.dataDir}/immich/machine-learning/cache";
 
