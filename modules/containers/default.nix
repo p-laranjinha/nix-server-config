@@ -60,9 +60,22 @@ in
     # Allow non-root users to bind to privileged ports like 80.
     boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
 
-    systemd.services.${"home-manager-${vars.username}"}.serviceConfig = {
-      # Extending timeout because starting containers can take quite a bit.
-      TimeoutStartSec = lib.mkForce "30m";
+    systemd.services = {
+      ${"home-manager-${vars.username}"}.serviceConfig = {
+        # Extending timeout because starting containers can take quite a bit.
+        TimeoutStartSec = lib.mkForce "30m";
+      };
+      # https://github.com/containers/podman/issues/24796#issuecomment-2527822425
+      # Podman waits for the 'network-online.target' to start but it never does
+      #  because nothing depends on it, so adding this service that does
+      #  improves container start times quite a bit.
+      podman-network-online-dummy = {
+        enable = true;
+        wants = ["network-online.target"];
+        after = ["network-online.target"];
+        wantedBy = ["multi-user.target"];
+        script = "echo Activating network-online.target";
+      };
     };
 
     # Enable podman & podman systemd generator.
@@ -168,4 +181,3 @@ in
 #  set their permissions. Using 2___ permissions, makes it so the files created
 #  in that directory inherit the group, so I can hopefully at least read the
 #  files outside the container.
-
