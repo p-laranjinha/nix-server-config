@@ -30,6 +30,7 @@
     "${defaultConfigDir}/nginx/proxy-confs/immich.subdomain.conf" = "${configDir}/immich.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/copyparty.subdomain.conf" = "${configDir}/copyparty.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/lldap.subdomain.conf" = "${configDir}/lldap.subdomain.conf";
+    "${defaultConfigDir}/nginx/proxy-confs/navidrome.subdomain.conf" = "${configDir}/navidrome.subdomain.conf";
   };
   containerPUID = "1000";
   hostPUID = toString ((lib.toInt containerPUID) + vars.containers.uidGidCount * localVars.i + (builtins.elemAt config.users.users.${vars.username}.subUidRanges 0).startUid);
@@ -90,6 +91,7 @@ in {
         copyparty = "swag-copyparty";
         authelia = "swag-authelia";
         lldap = "swag-lldap";
+        navidrome = "swag-navidrome";
         # WARN: Everytime you change this, you need to remove
         #  '${defaultConfigDir}/nginx/resolver.conf' or else the
         #  new networks aren't used.

@@ -22,6 +22,7 @@ vars: let
       "authelia-postgres"
       "lldap"
       "lldap-postgres"
+      "navidrome"
     ];
     # Unfortunately, I need to make this a list if I want to keep the order in
     #  the modifying function below. If I used an attrset, they would be sorted
@@ -53,6 +54,12 @@ vars: let
       {authelia-postgres.mainGroup = "authelia-postgres";}
       {lldap.mainGroup = "lldap";}
       {lldap-postgres.mainGroup = "lldap-postgres";}
+      {
+        navidrome = {
+          mainGroup = "navidrome";
+          extraGroups = ["public"];
+        };
+      }
     ];
     dataDir = "${vars.homeDirectory}/container-data";
     publicDir = "${vars.homeDirectory}/public";

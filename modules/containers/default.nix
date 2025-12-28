@@ -40,6 +40,7 @@ in
       swag.enable = true;
       authelia.enable = true;
       lldap.enable = true;
+      navidrome.enable = true;
 
       searxng.autoStart = true;
       homepage.autoStart = true;
@@ -49,6 +50,7 @@ in
       swag.autoStart = true;
       authelia.autoStart = true;
       lldap.autoStart = true;
+      navidrome.autoStart = true;
     };
 
     # Run 'systemd-tmpfiles' to apply these rules manually.
@@ -181,3 +183,4 @@ in
 #  set their permissions. Using 2___ permissions, makes it so the files created
 #  in that directory inherit the group, so I can hopefully at least read the
 #  files outside the container.
+
