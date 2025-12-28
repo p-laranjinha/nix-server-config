@@ -32,8 +32,8 @@
     "${defaultConfigDir}/nginx/proxy-confs/lldap.subdomain.conf" = "${configDir}/lldap.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/navidrome.subdomain.conf" = "${configDir}/navidrome.subdomain.conf";
   };
-  containerPUID = "1000";
-  hostPUID = toString ((lib.toInt containerPUID) + vars.containers.uidGidCount * localVars.i + (builtins.elemAt config.users.users.${vars.username}.subUidRanges 0).startUid);
+  containerUID = "1000";
+  hostUID = toString ((lib.toInt containerUID) + vars.containers.uidGidCount * localVars.i + (builtins.elemAt config.users.users.${vars.username}.subUidRanges 0).startUid);
 in {
   options.opts.containers.swag = {
     enable = lib.mkEnableOption "SWAG";
@@ -46,7 +46,7 @@ in {
         "d ${vars.containers.dataDir}/swag 2770 ${vars.username} ${localVars.mainGroup} - -"
         "d ${defaultConfigDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
         "d ${modCacheDir} 2770 ${vars.username} ${localVars.mainGroup} - -"
-        "Z ${defaultConfigDir}/* 770 ${hostPUID} ${localVars.mainGroup} - -"
+        "Z ${defaultConfigDir}/* 770 ${hostUID} ${localVars.mainGroup} - -"
         # Symlinks aren't created if the destination directories have a different owner.
         "d ${defaultConfigDir}/dns-conf 770 ${vars.username} ${localVars.mainGroup} - -"
         "d ${defaultConfigDir}/nginx 770 ${vars.username} ${localVars.mainGroup} - -"
@@ -113,7 +113,7 @@ in {
                   "80:80"
                 ];
                 environments = {
-                  PUID = containerPUID;
+                  PUID = containerUID;
                   PGID = funcs.containers.getContainerGid localVars.mainGroup;
                   TZ = "Europe/Lisbon";
                   URL = "orangepebble.net";

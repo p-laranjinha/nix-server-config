@@ -22,6 +22,9 @@
     DB_USERNAME = "postgres";
     DB_DATABASE_NAME = "immich";
   };
+
+  databaseUID = "999"; # The 'postgres' user.
+  databaseHostUID = toString ((lib.toInt databaseUID) + vars.containers.uidGidCount * localVars.immich-database.i + (builtins.elemAt config.users.users.${vars.username}.subUidRanges 0).startUid);
 in {
   options.opts.containers.immich = {
     enable = lib.mkEnableOption "Immich";
@@ -31,19 +34,17 @@ in {
   config = lib.mkIf config.opts.containers.immich.enable {
     systemd.tmpfiles.rules = [
       "d ${immichUploadDir} 2770 ${vars.username} public - -"
+      "Z ${immichUploadDir}/* 770 ${vars.username} public - -"
 
       "d ${vars.containers.dataDir}/immich 2770 ${vars.username} ${localVars.immich.mainGroup} - -"
 
       "d ${vars.containers.dataDir}/immich/database 2770 ${vars.username} ${localVars.immich-database.mainGroup} - -"
-      "d ${databaseDataDir} 2770 ${vars.username} ${localVars.immich-database.mainGroup} - -"
+      "d ${databaseDataDir} 2770 ${databaseHostUID} ${localVars.immich-database.mainGroup} - -"
+      "Z ${databaseDataDir}/* 770 ${databaseHostUID} ${localVars.immich-database.mainGroup} - -"
 
       "d ${vars.containers.dataDir}/immich/machine-learning 2770 ${vars.username} ${localVars.immich-machine-learning.mainGroup} - -"
       "d ${machineLearningCacheDir} 2770 ${vars.username} ${localVars.immich-machine-learning.mainGroup} - -"
-
-      "Z ${immichUploadDir} 2770 ${vars.username} public - -"
-      "Z ${vars.containers.dataDir}/immich 2770 ${vars.username} ${localVars.immich.mainGroup} - -"
-      "Z ${vars.containers.dataDir}/immich/database 2770 ${vars.username} ${localVars.immich-database.mainGroup} - -"
-      "Z ${vars.containers.dataDir}/immich/machine-learning 2770 ${vars.username} ${localVars.immich-machine-learning.mainGroup} - -"
+      "Z ${machineLearningCacheDir}/* 770 ${vars.username} ${localVars.immich-machine-learning.mainGroup} - -"
     ];
     secrets = builtins.mapAttrs (_: value:
       {
@@ -115,7 +116,7 @@ in {
               networkAliases = ["redis"];
             };
           };
-          immich-database = funcs.containers.mkConfig "postgres" localVars.immich-database {
+          immich-database = funcs.containers.mkConfig databaseUID localVars.immich-database {
             containerConfig = {
               image = databaseImage;
               environments = {
@@ -126,7 +127,7 @@ in {
               };
               environmentFiles = [config.secrets.immich-postgres-password.path];
               volumes = [
-                "${databaseDataDir}:/var/lib/postgresql"
+                "${databaseDataDir}:/var/lib/postgresql/data"
               ];
               shmSize = "128mb";
               networks = ["immich"];
