@@ -108,8 +108,6 @@
     flags = "-k -p --utc";
   };
 
-  # TODO: maybe add email sending for ZFS events, check the official nix wiki for this
-
   nixpkgs.hostPlatform = lib.mkDefault vars.hostPlatform;
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

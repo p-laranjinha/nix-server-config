@@ -29,6 +29,51 @@
     owner = vars.username;
     neededForUsers = true;
   };
+  secrets.smtp-password = {
+    sopsFile = "${vars.secretsDirectory}/smtp-password";
+    format = "binary";
+    # Entire file.
+    key = "";
+    # Only the user can read and nothing else.
+    mode = "0400";
+    owner = vars.username;
+  };
+
+  # https://wiki.nixos.org/wiki/ZFS#Mail_notifications_(ZFS_Event_Daemon)
+  # https://wiki.archlinux.org/title/Msmtp
+  # https://gist.github.com/nfsarmento/4bb5e0ff3090f150c6696793cf8e8488
+  programs.msmtp = {
+    enable = true;
+    setSendmail = true;
+    defaults = {
+      aliases = "/etc/aliases";
+      auth = true;
+      tls = "on";
+      tls_certcheck = "off";
+    };
+    accounts = {
+      default = {
+        host = "smtp.gmail.com";
+        port = 587;
+        from = "orangepebbleauth@gmail.com";
+        user = "orangepebbleauth@gmail.com";
+        passwordeval = "cat ${config.secrets.smtp-password.path}";
+      };
+    };
+  };
+  environment.etc.aliases.text = ''
+    root: orangepebblecreations@gmail.com
+  '';
+  services.zfs.zed = {
+    enableMail = true;
+    settings = {
+      ZED_EMAIL_ADDR = ["root"];
+      # send notification if scrub succeeds
+      ZED_NOTIFY_VERBOSE = true;
+    };
+  };
+  # for zed enableMail, enable sendmailSetuidWrapper
+  services.mail.sendmailSetuidWrapper.enable = true;
 
   security.sudo.extraConfig = ''
     Defaults pwfeedback # Shows asterisks when typing password.
