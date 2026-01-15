@@ -51,7 +51,7 @@
         };
         "music" = {
           id = "music";
-          path = "~/sync/music";
+          path = "~/public/music/personal";
           devices = [
             "phone"
             "desktop"
