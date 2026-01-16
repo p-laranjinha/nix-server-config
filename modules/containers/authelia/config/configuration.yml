@@ -30,6 +30,15 @@ access_control:
       policy: 'bypass'
 
     - domain:
+        - 'music.orangepebble.net'
+      resources:
+        # Bypass auth so its possible to share files with anyone.
+        - '/share/*'
+        # Bypass auth so its possible to use the Subsonic API.
+        - '/rest/*'
+      policy: 'bypass'
+
+    - domain:
         - 'files.orangepebble.net'
         - 'music.orangepebble.net'
       policy: 'two_factor'

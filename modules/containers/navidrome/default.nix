@@ -38,14 +38,18 @@ in {
               image = navidromeImage;
               environments = {
                 ND_LOGLEVEL = "debug";
-                # Use a default subfolder for multi-library support.
-                ND_MUSICFOLDER = "/music/default";
                 ND_BASEURL = "https://music.orangpebble.net";
                 ND_EXTAUTH_TRUSTEDSOURCES = "10.0.0.0/8";
-                ND_ENABLEUSEREDITING = "false";
+                # Use a default subfolder for multi-library support.
+                ND_MUSICFOLDER = "/music/default";
+                # Backup the database.
                 ND_BACKUP_PATH = "/backup";
                 ND_BACKUP_SCHEDULE = "0 0 * * *"; # Every 24h
                 ND_BACKUP_COUNT = "7";
+                # Required for auth with Subsonic API bypassing Authelia.
+                ND_ENABLEUSEREDITING = "true";
+                # Sharing.
+                ND_ENABLESHARING = "true";
               };
               volumes = [
                 "${navidromeDataDir}:/data"

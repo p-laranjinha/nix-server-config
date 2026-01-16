@@ -1,4 +1,8 @@
-{vars, ...}: {
+{
+  vars,
+  pkgs,
+  ...
+}: {
   # Non-"home manager" syncthing fails to create this directory.
   systemd.tmpfiles.rules = [
     "d /var/lib/syncthing - ${vars.username} users - -"
@@ -57,9 +61,13 @@
             "desktop"
           ];
           versioning = {
-            type = "staggered";
-            #cleanupIntervalS = "604800"; # clean once per week
-            params.maxAge = "31536000"; # 1 year
+            type = "external";
+            # Just delete old versions so that it doesn't confuse Navidrome.
+            params.versionsPath = pkgs.writers.writeBash "delete" ''
+              folderpath="$1"
+              filepath="$2"
+              rm -rf "$folderpath/$filepath"
+            '';
           };
         };
         "tachiyomi-backup" = {
