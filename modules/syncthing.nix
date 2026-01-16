@@ -61,13 +61,9 @@
             "desktop"
           ];
           versioning = {
-            type = "external";
+            type = "simple";
             # Just delete old versions so that it doesn't confuse Navidrome.
-            params.versionsPath = pkgs.writers.writeBash "delete" ''
-              folderpath="$1"
-              filepath="$2"
-              rm -rf "$folderpath/$filepath"
-            '';
+            keep = 0;
           };
         };
         "tachiyomi-backup" = {
