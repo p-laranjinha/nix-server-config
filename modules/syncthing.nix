@@ -60,11 +60,6 @@
             "phone"
             "desktop"
           ];
-          versioning = {
-            type = "simple";
-            # Just delete old versions so that it doesn't confuse Navidrome.
-            keep = 0;
-          };
         };
         "tachiyomi-backup" = {
           id = "tachiyomi-backup";
