@@ -16,14 +16,15 @@ customDNS:
   mapping:
     orangepebble.net: 192.168.1.4
 
-blocking:
-  denylists:
-    default:
-      - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/domains/pro.txt
-      - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/domains/tif.txt
-  clientGroupsBlock:
-    default:
-      - default
+# Removing blocking due to my brother's request
+# blocking:
+#   denylists:
+#     default:
+#       - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/domains/pro.txt
+#       - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/domains/tif.txt
+#   clientGroupsBlock:
+#     default:
+#       - default
 
 ports:
   dns: 53
