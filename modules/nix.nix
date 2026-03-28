@@ -3,7 +3,8 @@
   config,
   vars,
   ...
-}: {
+}:
+{
   networking.hostName = vars.hostname;
   # Obtained via `head -c 8 /etc/machine-id`, might require manually mounting
   #  /home on first boot.
@@ -13,7 +14,7 @@
   users.users.pebble = {
     isNormalUser = true;
     description = vars.fullname;
-    extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
     hashedPasswordFile = config.secrets.password.path;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOIZeqsx4YGlynKAgAW/kFvcdb3Ec4ES+b+j8eZuQ6l2 pebble@orange"
@@ -67,7 +68,7 @@
   services.zfs.zed = {
     enableMail = true;
     settings = {
-      ZED_EMAIL_ADDR = ["root"];
+      ZED_EMAIL_ADDR = [ "root" ];
       # send notification if scrub succeeds
       ZED_NOTIFY_VERBOSE = true;
     };
@@ -83,12 +84,15 @@
   # Can be seen on entries shown by 'nixos-rebuild list-generations'.
   system.configurationRevision = inputs.self.rev or "dirty";
 
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   nix.optimise = {
     # Cleans the store
     automatic = true;
-    dates = ["weekly"];
+    dates = [ "weekly" ];
   };
   nix.gc = {
     # Deletes old generations
@@ -102,13 +106,13 @@
 
   services.openssh = {
     enable = true;
-    ports = [22];
+    ports = [ 22 ];
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
       PermitRootLogin = "no";
       TCPKeepAlive = "yes";
-      AllowUsers = ["pebble"];
+      AllowUsers = [ "pebble" ];
     };
   };
   services.fail2ban.enable = true;

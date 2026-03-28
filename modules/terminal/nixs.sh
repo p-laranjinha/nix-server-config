@@ -1,5 +1,5 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p bash
+#! nix-shell -i bash -p bash treefmt nixfmt
 # shellcheck shell=bash
 
 NIX_CONFIG_DIR=/home/pebble/nix-server-config

@@ -4,7 +4,8 @@
   funcs,
   lib,
   ...
-}: let
+}:
+let
   localVars = vars.containers.containers;
 
   searxngImage = "ghcr.io/searxng/searxng:2025.12.12-920b40253";
@@ -13,7 +14,8 @@
   searxngConfigDir = funcs.relativeToAbsoluteConfigPath ./config;
   searxngDataDir = "${vars.containers.dataDir}/searxng/data";
   valkeyDataDir = "${vars.containers.dataDir}/searxng/valkey-data";
-in {
+in
+{
   options.opts.containers.searxng = {
     enable = lib.mkEnableOption "SearXNG";
     autoStart = lib.mkEnableOption "SearXNG auto-start";
@@ -54,25 +56,25 @@ in {
               environments = {
                 FORCE_OWNERSHIP = "false";
               };
-              environmentFiles = [config.secrets.searxng.path];
+              environmentFiles = [ config.secrets.searxng.path ];
               volumes = [
                 "${searxngConfigDir}:/etc/searxng"
                 "${searxngDataDir}:/var/cache/searxng"
               ];
-              networks = ["searxng"];
+              networks = [ "searxng" ];
             };
           };
           searxng-valkey = funcs.containers.mkConfig "valkey" localVars.searxng-valkey {
             containerConfig = {
               image = valkeyImage;
               exec = "valkey-server --save 30 1";
-              volumes = ["${valkeyDataDir}:/data"];
-              networkAliases = ["valkey"];
-              networks = ["searxng"];
+              volumes = [ "${valkeyDataDir}:/data" ];
+              networkAliases = [ "valkey" ];
+              networks = [ "searxng" ];
             };
           };
         };
-        networks.searxng = {};
+        networks.searxng = { };
       };
     };
   };

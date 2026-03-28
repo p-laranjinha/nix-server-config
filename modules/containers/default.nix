@@ -4,7 +4,8 @@
   vars,
   funcs,
   ...
-}: let
+}:
+let
   # Easy way to disable all the container related things, because when I'm
   #  adding and experimenting with containers it's nice to have a way to reset
   #  to a clean slate.
@@ -15,11 +16,9 @@
   #  '~/.local/share/containers'.
   enable = true;
 in
-  if enable
-  then {
-    imports =
-      [inputs.quadlet-nix.nixosModules.quadlet]
-      ++ lib.attrValues (lib.modulesIn ./.);
+if enable then
+  {
+    imports = [ inputs.quadlet-nix.nixosModules.quadlet ] ++ lib.attrValues (lib.modulesIn ./.);
 
     # Rebuilding with multiple containers may fail because running the containers
     #  and their configuration may take too long. Rebuilding a second time may
@@ -73,9 +72,9 @@ in
       #  improves container start times quite a bit.
       podman-network-online-dummy = {
         enable = true;
-        wants = ["network-online.target"];
-        after = ["network-online.target"];
-        wantedBy = ["multi-user.target"];
+        wants = [ "network-online.target" ];
+        after = [ "network-online.target" ];
+        wantedBy = [ "multi-user.target" ];
         script = "echo Activating network-online.target";
       };
     };
@@ -116,13 +115,14 @@ in
     };
     users.groups = funcs.containers.mkGroups vars.containers.groups;
     hm = {
-      imports = [inputs.quadlet-nix.homeManagerModules.quadlet];
+      imports = [ inputs.quadlet-nix.homeManagerModules.quadlet ];
       virtualisation.quadlet = {
         autoEscape = true; # Will be default in the future.
       };
     };
   }
-  else {}
+else
+  { }
 # Groups aren't deleted automatically because Nix doesn't know what files are
 #  owned by the groups.
 # So if you wan't to remove or change group order, you'll have to manually
@@ -183,4 +183,3 @@ in
 #  set their permissions. Using 2___ permissions, makes it so the files created
 #  in that directory inherit the group, so I can hopefully at least read the
 #  files outside the container.
-

@@ -3,10 +3,11 @@
   lib,
   vars,
   ...
-}: {
+}:
+{
   imports = [
     inputs.home-manager.nixosModules.default
-    (lib.mkAliasOptionModule ["hm"] ["home-manager" "users" vars.username])
+    (lib.mkAliasOptionModule [ "hm" ] [ "home-manager" "users" vars.username ])
   ];
 
   home-manager = {
@@ -15,9 +16,9 @@
     verbose = true;
     backupFileExtension = "backup";
     overwriteBackup = false;
-    extraSpecialArgs = {inherit inputs;};
+    extraSpecialArgs = { inherit inputs; };
     # For modules shared by all users;
-    sharedModules = [];
+    sharedModules = [ ];
   };
 
   hm = {

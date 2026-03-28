@@ -4,7 +4,8 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   localVars = vars.containers.containers.copyparty;
 
   copypartyImage = "ghcr.io/9001/copyparty-ac:1.19.23";
@@ -14,7 +15,8 @@
   copypartyConfigDir = funcs.relativeToAbsoluteConfigPath ./config;
   copypartyCfgDir = "${vars.containers.dataDir}/copyparty/cfg";
   copypartyHistsDir = "${vars.containers.dataDir}/copyparty/hists";
-in {
+in
+{
   options.opts.containers.copyparty = {
     enable = lib.mkEnableOption "copyparty";
     autoStart = lib.mkEnableOption "copyparty auto-start";

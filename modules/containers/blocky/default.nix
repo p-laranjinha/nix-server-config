@@ -19,13 +19,15 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   localVars = vars.containers.containers.blocky;
 
   blockyImage = "ghcr.io/0xerr0r/blocky:v0.28.2";
 
   blockyConfigFile = funcs.relativeToAbsoluteConfigPath ./config.yaml;
-in {
+in
+{
   options.opts.containers.blocky = {
     enable = lib.mkEnableOption "blocky";
     autoStart = lib.mkEnableOption "blocky auto-start";
@@ -36,8 +38,8 @@ in {
       # Blocky doesn't use groups so make sure the config file is readable by anyone.
       "z ${blockyConfigFile} 644 ${vars.username} users - -"
     ];
-    networking.firewall.allowedTCPPorts = [53];
-    networking.firewall.allowedUDPPorts = [53];
+    networking.firewall.allowedTCPPorts = [ 53 ];
+    networking.firewall.allowedUDPPorts = [ 53 ];
     hm = {
       virtualisation.quadlet = {
         containers = {
@@ -106,4 +108,3 @@ in {
 #  no internet.
 #  So, in order to have redundancy, I'll just leave the secondary DNS server
 #   on the DHCP server empty, which has been working fine.
-

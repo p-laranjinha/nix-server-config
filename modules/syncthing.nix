@@ -2,7 +2,8 @@
   vars,
   pkgs,
   ...
-}: {
+}:
+{
   # Non-"home manager" syncthing fails to create this directory.
   systemd.tmpfiles.rules = [
     "d /var/lib/syncthing - ${vars.username} users - -"

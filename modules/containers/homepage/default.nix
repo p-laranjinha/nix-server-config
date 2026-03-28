@@ -4,14 +4,16 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   localVars = vars.containers.containers;
 
   homepageImage = "ghcr.io/gethomepage/homepage:v1.8.0";
   socketProxyImage = "ghcr.io/tecnativa/docker-socket-proxy:v0.4.1";
 
   configDir = funcs.relativeToAbsoluteConfigPath ./config;
-in {
+in
+{
   options.opts.containers.homepage = {
     enable = lib.mkEnableOption "homepage";
     autoStart = lib.mkEnableOption "homepage auto-start";
@@ -23,7 +25,7 @@ in {
       "Z ${configDir} 2770 ${vars.username} ${localVars.homepage.mainGroup} - -"
     ];
     # Required to run homepage in rootless mode and it being able to read containers.
-    users.users.${vars.username}.extraGroups = ["podman"];
+    users.users.${vars.username}.extraGroups = [ "podman" ];
     hm = {
       virtualisation.quadlet = {
         containers = {
@@ -41,7 +43,7 @@ in {
               volumes = [
                 "${configDir}:/app/config"
               ];
-              networks = ["homepage"];
+              networks = [ "homepage" ];
             };
           };
           # https://gethomepage.dev/configs/docker/
@@ -61,12 +63,12 @@ in {
                 #  Or run `systemctl --user start podman.socket`.
                 "/run/user/1000/podman/podman.sock:/var/run/docker.sock:ro"
               ];
-              networks = ["homepage"];
+              networks = [ "homepage" ];
               dropCapabilities = vars.containers.rootCapabilities;
             };
           };
         };
-        networks.homepage = {};
+        networks.homepage = { };
       };
     };
   };

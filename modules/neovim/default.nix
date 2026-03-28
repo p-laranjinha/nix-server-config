@@ -2,7 +2,8 @@
   pkgs,
   funcs,
   ...
-}: {
+}:
+{
   environment.systemPackages = with pkgs; [
     # Dependencies (the comments are what made me install them, not all they might be used for)
     wl-clipboard # Clipboard provider for Wayland.

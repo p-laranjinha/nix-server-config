@@ -5,16 +5,24 @@
   modulesPath,
   vars,
   ...
-}: {
+}:
+{
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
   boot = {
-    initrd.availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod"];
-    initrd.kernelModules = [];
-    kernelModules = ["kvm-amd"];
-    extraModulePackages = [];
+    initrd.availableKernelModules = [
+      "nvme"
+      "xhci_pci"
+      "ahci"
+      "usb_storage"
+      "usbhid"
+      "sd_mod"
+    ];
+    initrd.kernelModules = [ ];
+    kernelModules = [ "kvm-amd" ];
+    extraModulePackages = [ ];
     loader.grub = {
       enable = true;
       efiSupport = true;
@@ -70,19 +78,19 @@
     "/persist" = {
       device = "zroot/persist";
       fsType = "zfs";
-      options = ["zfsutil"];
+      options = [ "zfsutil" ];
       # The impermanence guide said this was needed.
       neededForBoot = true;
     };
     "/" = {
       device = "zroot/root";
       fsType = "zfs";
-      options = ["zfsutil"];
+      options = [ "zfsutil" ];
     };
     "/nix" = {
       device = "zroot/nix";
       fsType = "zfs";
-      options = ["zfsutil"];
+      options = [ "zfsutil" ];
     };
     "/boot" = {
       device = "/dev/disk/by-id/nvme-Lexar_SSD_NM620_256GB_QAG282R016101P1157-part1";

@@ -4,7 +4,8 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   localVars = vars.containers.containers.navidrome;
 
   navidromeImage = "ghcr.io/navidrome/navidrome:0.59.0";
@@ -12,7 +13,8 @@
   navidromeDataDir = "${vars.containers.dataDir}/navidrome/data";
   navidromeBackupDir = "${vars.containers.dataDir}/navidrome/backup";
   musicDir = "${vars.containers.publicDir}/music";
-in {
+in
+{
   options.opts.containers.navidrome = {
     enable = lib.mkEnableOption "Navidrome";
     autoStart = lib.mkEnableOption "Navidrome auto-start";

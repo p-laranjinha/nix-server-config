@@ -1,4 +1,5 @@
-inputs: let
+inputs:
+let
   # Setting this in 'let in' so the values can be used easier in imports.
   default = rec {
     hostname = "server";
@@ -13,4 +14,4 @@ inputs: let
   };
   containers = import ./containers.nix default;
 in
-  default // containers
+default // containers

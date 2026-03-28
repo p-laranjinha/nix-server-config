@@ -7,13 +7,14 @@
   vars,
   ...
 }:
-with lib; {
+with lib;
+{
   # Using this options instead of '_module.args' directly because I can't set
   #  'funcs' im multiple places at once without an error otherwise (it wants
   #  arguments to be set only once. NixOS options merge all the different
   #  values set before acting on them.
   options.opts.funcs = mkOption {
-    default = {};
+    default = { };
     type = with types; attrsOf anything;
   };
 
@@ -33,11 +34,11 @@ with lib; {
       # To do this, we need to replace the store prefix, and because this file is 2
       #  folders deep in the config `(toString ./../..)' is equivalent to the store
       #  directory.
-      relativeToAbsoluteConfigPath = path: (vars.configDirectory + removePrefix (toString ./../..) (toString path));
+      relativeToAbsoluteConfigPath =
+        path: (vars.configDirectory + removePrefix (toString ./../..) (toString path));
 
       # Creates symlinks to these config files that can be changed without rebuilding.
-      mkMutableConfigSymlink = path:
-        funcs.mkOutOfStoreSymlink (funcs.relativeToAbsoluteConfigPath path);
+      mkMutableConfigSymlink = path: funcs.mkOutOfStoreSymlink (funcs.relativeToAbsoluteConfigPath path);
     };
   };
 }
