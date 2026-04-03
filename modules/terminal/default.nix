@@ -2,73 +2,115 @@
   pkgs,
   vars,
   funcs,
+  inputs,
   ...
 }:
 {
-  environment.shellAliases = {
-    lg = "lazygit";
+  imports = [
+    ./neovim
 
-    # Undoes a commit but keeps the changes.
-    gitr = "git reset --soft HEAD~1";
+    # Tool to locate the nixpkgs package providing a certain file. Used by comma.
+    # Unlike regular nix-index, this one includes an automatically updated database, and so I don't
+    #  need to manually update it every once in a while.
+    inputs.nix-index-database.darwinModules.nix-index
+  ];
 
-    # I've been typing this so much working with the containers that I want
-    #  an easier way.
-    sysc = "systemctl";
-    syscu = "systemctl --user";
+  users.defaultUserShell = pkgs.zsh;
+  environment = {
+    shells = with pkgs; [
+      zsh
+      bash
+    ];
+    shellAliases = {
+      lg = "lazygit";
 
-    # Runs a script that rebuild switches this config.
-    nixs = toString (funcs.mkMutableConfigSymlink ./nixs.sh);
-    # Runs a script that rebuild switches and commits this config.
-    nixsf = toString (funcs.mkMutableConfigSymlink ./nixsf.sh);
-    nixb = "sudo nixos-rebuild build --flake ${vars.configDirectory}";
-    nixl = "nixos-rebuild list-generations";
-    nixu = "nix flake update --flake ${vars.configDirectory}";
+      # Undoes a commit but keeps the changes.
+      gitr = "git reset --soft HEAD~1";
 
-    # "nix query"
-    # Runs nix repl initialized with values from this flake for easier testing and debugging.
-    nixq = ''nix repl --file ${pkgs.writeText "replinit.nix" ''
-      let
-        self = builtins.getFlake "config";
-      in rec {
-        inherit self;
-        inherit (self) inputs lib;
-        inherit (self.nixosConfigurations) ${vars.hostname};
-        inherit (self.nixosConfigurations.${vars.hostname}._module.specialArgs) vars;
-        inherit (self.nixosConfigurations.${vars.hostname}._module.args) funcs;
-      }
-    ''}'';
-  };
-  programs.bash = {
-    enable = true;
-  };
-  programs.git = {
-    enable = true;
-    config = {
-      init.defaultBranch = "master";
-      user.name = "p-laranjinha";
-      user.email = "plcasimiro2000@gmail.com";
+      # I've been typing this so much working with the containers that I want
+      #  an easier way.
+      sysc = "systemctl";
+      syscu = "systemctl --user";
 
-      core.pager = "delta";
-      interactive.diffFilter = "delta --color-only";
-      delta.navigate = "true"; # use n and N to move between diff sections
-      delta.dark = "true";
-      delta.line-numbers = "true";
-      delta.hyperlinks = "true";
-      merge.conflictStyle = "zdiff3";
+      # Runs a script that rebuild switches this config.
+      nixs = toString (funcs.mkMutableConfigSymlink ./nixs.sh);
+      nixb = "sudo nixos-rebuild build --flake ${vars.configDirectory}";
+      nixl = "nixos-rebuild list-generations";
+      nixu = "nix flake update --flake ${vars.configDirectory}";
+      nixd = "nix develop -c $SHELL";
+      nixp = "nix-shell --run $SHELL -p";
+
+      # Runs nix repl initialized with values from this flake for easier testing and debugging.
+      nixr = "nix repl --file ${pkgs.writeText "replinit.nix" ''
+        let
+          self = builtins.getFlake "config";
+        in rec {
+          inherit self;
+          inherit (self) inputs lib;
+          inherit (self.nixosConfigurations) ${vars.hostname};
+          inherit (self.nixosConfigurations ${vars.hostname}) pkgs;
+          inherit (self.nixosConfigurations.${vars.hostname}._module.specialArgs) vars;
+          inherit (self.nixosConfigurations.${vars.hostname}._module.args) funcs;
+        }
+      ''}";
     };
-    # Git extension for versioning large files (Git Large File Storage).
-    lfs.enable = true;
   };
-  # Tool to locate the nixpkgs package providing a certain file. Used by comma.
-  programs.nix-index.enable = true;
+  programs = {
+    zsh = {
+      enable = true;
+      enableCompletion = true;
+      autosuggestions.enable = true;
+      syntaxHighlighting.enable = true;
+      # Used by my prompt.
+      ohMyZsh.enable = true;
+      promptInit = ''
+        ZSH_NOTIFY_ICON=${pkgs.foot}/share/icons/hicolor/scalable/apps/foot.svg
+        FREEDESKTOP_SOUNDS_DIR=${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop
+        source "${funcs.mkMutableConfigSymlink ./prompt.zsh}"
+      '';
+      interactiveShellInit = ''
+        ZSH_VI_MODE_PLUGIN_FILE="${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh"
+        source "${funcs.mkMutableConfigSymlink ./.zshrc}"
+      '';
+    };
+    bash.enable = true;
+    git = {
+      enable = true;
+      config = {
+        init.defaultBranch = "master";
+        user.name = "p-laranjinha";
+        user.email = "plcasimiro2000@gmail.com";
 
-  hm = {
-    programs.gh.enable = true;
+        core.pager = "delta";
+        interactive.diffFilter = "delta --color-only";
+        delta = {
+          navigate = "true"; # use n and N to move between diff sections
+          dark = "true";
+          line-numbers = "true";
+          hyperlinks = "true";
+        };
+        merge.conflictStyle = "zdiff3";
+      };
+      # Git extension for versioning large files (Git Large File Storage).
+      lfs.enable = true;
+    };
+
+    # CLI tool to run programs without installing them on Nix. Functionally an easier to use nix-shell. Requires nix-index.
+    nix-index-database.comma.enable = true;
+    nix-index.enable = true;
+  };
+
+  hm.programs = {
+    gh.enable = true;
 
     # Throws an error when not set with home manager.
-    programs.zoxide.enable = true;
-    # Required for zoxide to set the 'z' and 'zi' commands when set with home manager.
-    programs.bash.enable = true;
+    zoxide.enable = true;
+    zsh = {
+      # Required for zoxide to set the 'z' and 'zi' commands when set with home manager.
+      enable = true;
+      # Removes rebuild warning.
+      dotDir = "${vars.homeDirectory}/.config/zsh";
+    };
   };
 
   environment.systemPackages = with pkgs; [
@@ -81,13 +123,10 @@
     # App to give quick examples of how to use most commands.
     tldr
 
-    # CLI tool to run programs without installing them on Nix. Functionally an easier to use nix-shell. Requires nix-index.
-    comma
-
     # Nix formatter.
-    alejandra
-    # Nix language server.
-    nil
+    nixfmt
+    # Formatter multiplexer
+    treefmt
     # Nix package version diff tool.
     nvd
 
@@ -95,6 +134,7 @@
     fd
     update-nix-fetchgit
 
+    # Library with a bunch of terminal inputs and outputs.
     gum
 
     # Tool to see file changes in real time.
@@ -103,7 +143,11 @@
     # Syntax highlighting pager.
     delta
 
+    # 'cat' replacement with syntax highlighting.
     bat
+
+    # Calculator used by my zsh prompt to calculate run times.
+    bc
 
     # # You can also create simple shell scripts directly inside your
     # # configuration. For example, this adds a command 'my-hello' to your

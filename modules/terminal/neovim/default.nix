@@ -17,19 +17,27 @@
     gnumake # Required for LuaSnip.
     unzip # Used to install packages with Mason.
     cargo # Used to install the nil Nix LSP.
-    nodejs_24 # For the bash LSP.
+    nodejs_25 # For the bash LSP.
     python315 # For the python linter and formatter.
 
     # LSPs, DAPs, Linters and Formatters not installed with Mason.
     statix
+    # quickshell (.qml)
+    # qmllint requires more configuration that I don't know how to do.
+    kdePackages.qtdeclarative
   ];
   programs.neovim = {
     enable = true;
     defaultEditor = true;
-    vimAlias = true;
-    viAlias = true;
   };
   hm = {
     home.file.".config/nvim".source = funcs.mkMutableConfigSymlink ./config;
+  };
+  environment.shellAliases = {
+    vi = "nvim";
+    vim = "nvim";
+    vi2 = "NVIM_APPNAME=nvim2 nvvi";
+    vim2 = "NVIM_APPNAME=nvim2 nvim";
+    nvim2 = "NVIM_APPNAME=nvim2 nvim";
   };
 }

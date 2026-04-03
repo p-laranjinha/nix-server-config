@@ -7,7 +7,11 @@
 }:
 let
   localVars = vars.containers.containers;
-  autheliaImage = "ghcr.io/authelia/authelia:4.39.15";
+  # Find new versions at:
+  #  https://github.com/authelia/authelia/releases
+  autheliaImage = "ghcr.io/authelia/authelia:4.39.16";
+  # Redis and PostgreSQL versions are not specified, latest stable is the recommendation.
+  # Valkey is a Redis replacement so the same for that.
   valkeyImage = "ghcr.io/valkey-io/valkey:9.0.1";
   postgresImage = "docker.io/postgres:18.1";
   configDir = funcs.relativeToAbsoluteConfigPath ./config;

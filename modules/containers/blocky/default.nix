@@ -23,7 +23,9 @@
 let
   localVars = vars.containers.containers.blocky;
 
-  blockyImage = "ghcr.io/0xerr0r/blocky:v0.28.2";
+  # Find new versions at:
+  #  https://github.com/0xERR0R/blocky/releases
+  blockyImage = "ghcr.io/0xerr0r/blocky:v0.29.0";
 
   blockyConfigFile = funcs.relativeToAbsoluteConfigPath ./config.yaml;
 in

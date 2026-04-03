@@ -8,7 +8,9 @@
 let
   localVars = vars.containers.containers.navidrome;
 
-  navidromeImage = "ghcr.io/navidrome/navidrome:0.59.0";
+  # Find new versions at:
+  #  https://github.com/navidrome/navidrome/releases
+  navidromeImage = "ghcr.io/navidrome/navidrome:0.61.0";
 
   navidromeDataDir = "${vars.containers.dataDir}/navidrome/data";
   navidromeBackupDir = "${vars.containers.dataDir}/navidrome/backup";
