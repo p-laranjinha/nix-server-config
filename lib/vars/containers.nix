@@ -13,9 +13,9 @@ let
     # When adding more container groups later, these renamed groups can be reused.
     groups = [
       "public" # For everything that may be exposed to the internet.
-      "unused1" # WARN: deprecated
-      "unused2" # WARN: deprecated
-      "unused3" # WARN: deprecated
+      "karakeep"
+      "karakeep-chrome"
+      "karakeep-meilisearch"
       "copyparty"
       "immich"
       "immich-machine-learning"
@@ -35,9 +35,15 @@ let
     #  the correct index, unless it is the last one, which can just be removed.
     # When adding more containers later, the placeholder attrsets can be reused.
     containers = [
-      { unused1 = { }; } # WARN: deprecated
-      { unused2 = { }; } # WARN: deprecated
-      { unused3 = { }; } # WARN: deprecated
+      {
+        karakeep = {
+          mainGroup = "karakeep";
+          # For the common .env secret file.
+          extraGroups = [ "karakeep-meilisearch" ];
+        };
+      }
+      { karakeep-chrome.mainGroup = "karakeep-chrome"; }
+      { karakeep-meilisearch.mainGroup = "karakeep-meilisearch"; }
       { socket-proxy.mainGroup = "users"; }
       { blocky = { }; }
       {

@@ -31,13 +31,14 @@ if enable then
     #  from autostart.
     #  These can be removed manually in '~/.config/systemd/user/default.target.wants/'.
     opts.containers = {
-      blocky.enable = true;
+      blocky.enable = false;
       copyparty.enable = true;
       immich.enable = true;
       swag.enable = true;
       authelia.enable = true;
       lldap.enable = true;
       navidrome.enable = true;
+      karakeep.enable = true;
 
       blocky.autoStart = true;
       copyparty.autoStart = true;
@@ -46,6 +47,7 @@ if enable then
       authelia.autoStart = true;
       lldap.autoStart = true;
       navidrome.autoStart = true;
+      karakeep.autoStart = true;
     };
 
     # Run 'systemd-tmpfiles' to apply these rules manually.
@@ -167,7 +169,8 @@ else
 # https://www.redhat.com/en/blog/user-flag-rootless-containers
 # I'm also using 'user="<user>"' to make the container not use the root user,
 #  as even in rootless mode it still has more permissions. I find a valid user
-#  by running 'podman exec -it <container> cat /etc/passwd' to list all users
+#  by running 'podman exec -it <container> cat /etc/passwd' or
+#  'podman run --rm -it <image> cat /etc/passwd' to list all users
 #  (the best one to use is probably the last one).
 # For containers that need to be root to run some utils, I'll remove the user
 #  option but drop root's capabilities instead. Use the following to get the

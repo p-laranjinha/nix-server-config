@@ -37,6 +37,8 @@ let
     "${defaultConfigDir}/nginx/proxy-confs/lldap.subdomain.conf" = "${configDir}/lldap.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/navidrome.subdomain.conf" =
       "${configDir}/navidrome.subdomain.conf";
+    "${defaultConfigDir}/nginx/proxy-confs/karakeep.subdomain.conf" =
+      "${configDir}/karakeep.subdomain.conf";
   };
   containerUID = "1000";
   hostUID = toString (
@@ -109,6 +111,7 @@ in
           authelia = "swag-authelia";
           lldap = "swag-lldap";
           navidrome = "swag-navidrome";
+          karakeep = "swag-karakeep";
           # WARN: Everytime you change this, you need to remove
           #  '${defaultConfigDir}/nginx/resolver.conf' or else the
           #  new networks aren't used.
