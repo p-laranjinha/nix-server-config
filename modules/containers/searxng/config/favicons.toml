@@ -1,8 +1,0 @@
-[favicons]
-
-cfg_schema = 1   # config's schema version no.
-
-[favicons.cache]
-
-db_url = "/var/cache/searxng/faviconcache.db"  # default: "/tmp/faviconcache.db"
-LIMIT_TOTAL_BYTES = 2147483648                 # 2 GB / default: 50 MB

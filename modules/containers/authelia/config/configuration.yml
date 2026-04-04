@@ -17,7 +17,7 @@ access_control:
         # Uses Authelia as OAuth but shouldn't be behind it.
         - 'gallery.orangepebble.net'
       policy: 'bypass'
-    
+
     - domain:
         - 'files.orangepebble.net'
       resources:
@@ -43,9 +43,9 @@ access_control:
         - 'music.orangepebble.net'
       policy: 'two_factor'
 
-    - domain:
-        - 'search.orangepebble.net'
-      policy: 'one_factor'
+    # - domain:
+    #     - 'search.orangepebble.net'
+    #   policy: 'one_factor'
 
     - domain:
         - 'ldap.orangepebble.net'

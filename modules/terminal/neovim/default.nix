@@ -13,6 +13,7 @@
     luarocks # Lua package manager used by some plugins.
     lua51Packages.lua # Version lazy.nvim (with :checkhealth) says it needs.
     tree-sitter
+    glib # Contains 'gio' which is used by the file explorer to remove files.
     gcc # Required to compile treesitter parsers.
     gnumake # Required for LuaSnip.
     unzip # Used to install packages with Mason.

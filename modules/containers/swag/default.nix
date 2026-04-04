@@ -32,8 +32,6 @@ let
       "${configDir}/authelia.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/homepage.subdomain.conf" =
       "${configDir}/homepage.subdomain.conf";
-    "${defaultConfigDir}/nginx/proxy-confs/searxng.subdomain.conf" =
-      "${configDir}/searxng.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/immich.subdomain.conf" =
       "${configDir}/immich.subdomain.conf";
     "${defaultConfigDir}/nginx/proxy-confs/copyparty.subdomain.conf" =
@@ -108,7 +106,6 @@ in
       let
         networks = {
           # container = "network"
-          searxng = "swag-searxng";
           homepage = "swag-homepage";
           immich = "swag-immich";
           copyparty = "swag-copyparty";

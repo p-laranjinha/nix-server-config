@@ -8,10 +8,13 @@ let
     startGid = 1001;
     # Not all containers need special groups because they don't use volumes,
     #  but I'll add them just in case.
+    # WARN: To remove container groups just rename them to a temporary name so that the rest keep
+    #  the correct GID, unless it is the last one which can just be removed.
+    # When adding more container groups later, these renamed groups can be reused.
     groups = [
       "public" # For everything that may be exposed to the internet.
-      "searxng"
-      "searxng-valkey"
+      "unused1" # WARN: deprecated
+      "unused2" # WARN: deprecated
       "homepage"
       "copyparty"
       "immich"
@@ -28,9 +31,12 @@ let
     # Unfortunately, I need to make this a list if I want to keep the order in
     #  the modifying function below. If I used an attrset, they would be sorted
     #  alphabetically and so the subuid and subgid used aren't fixed.
+    # WARN: To remove container groups just rename them to a temporary name so that the rest keep
+    #  the correct index, unless it is the last one, which can just be removed.
+    # When adding more containers later, the renamed attrsets can be reused.
     containers = [
-      { searxng.mainGroup = "searxng"; }
-      { searxng-valkey.mainGroup = "searxng-valkey"; }
+      { unused1 = { }; } # WARN: deprecated
+      { unused2 = { }; } # WARN: deprecated
       { homepage.mainGroup = "homepage"; }
       { socket-proxy.mainGroup = "users"; }
       { blocky = { }; }
