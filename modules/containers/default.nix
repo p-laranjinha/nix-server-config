@@ -31,7 +31,6 @@ if enable then
     #  from autostart.
     #  These can be removed manually in '~/.config/systemd/user/default.target.wants/'.
     opts.containers = {
-      homepage.enable = true;
       blocky.enable = true;
       copyparty.enable = true;
       immich.enable = true;
@@ -40,7 +39,6 @@ if enable then
       lldap.enable = true;
       navidrome.enable = true;
 
-      homepage.autoStart = true;
       blocky.autoStart = true;
       copyparty.autoStart = true;
       immich.autoStart = true;

@@ -1,9 +1,0 @@
----
-# For configuration options and examples, please see:
-# https://gethomepage.dev/configs/services/
-
-- Containers:
-    - Blocky:
-        description: DNS proxy
-        server: podman
-        container: blocky
