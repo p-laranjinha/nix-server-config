@@ -19,6 +19,8 @@ let
 
   karakeepDataDir = "${vars.containers.dataDir}/karakeep/data";
   meilisearchDataDir = "${vars.containers.dataDir}/karakeep/meilisearch-data";
+
+  cookiesFile = funcs.relativeToAbsoluteConfigPath ./cookies.json;
 in
 {
   options.opts.containers.karakeep = {
@@ -33,6 +35,7 @@ in
       "Z ${karakeepDataDir}/* 770 ${vars.username} ${localVars.karakeep.mainGroup} - -"
       "d ${meilisearchDataDir} 2770 ${vars.username} ${localVars.karakeep-meilisearch.mainGroup} - -"
       "Z ${meilisearchDataDir}/* 770 ${vars.username} ${localVars.karakeep-meilisearch.mainGroup} - -"
+      "Z ${cookiesFile}/* 770 ${vars.username} ${localVars.karakeep.mainGroup} - -"
     ];
 
     secrets =
@@ -66,6 +69,7 @@ in
               environments = {
                 TZ = "Europe/Lisbon";
                 DATA_DIR = "/data";
+                BROWSER_COOKIE_PATH = "/cookies.json";
                 KARAKEEP_VERSION = karakeepVersion;
                 NEXTAUTH_URL = "https://bookmarks.orangepebble.net";
                 MEILI_ADDR = "http://karakeep-meilisearch:7700";
@@ -77,18 +81,27 @@ in
                 OAUTH_PROVIDER_NAME = "Authelia";
 
                 MAX_ASSET_SIZE_MB = "200";
-                CRAWLER_FULL_PAGE_SCREENSHOT = "true";
+                # Leave the full page to the archival.
+                CRAWLER_FULL_PAGE_SCREENSHOT = "false";
                 CRAWLER_SCREENSHOT_TIMEOUT_SEC = "30";
-                CRAWLER_FULL_PAGE_ARCHIVE = "true";
+                # Handle archival through the 'Rule Engine' so I have more control.
+                CRAWLER_FULL_PAGE_ARCHIVE = "false";
                 CRAWLER_VIDEO_DOWNLOAD = "true";
+                # Karakeep can only download 1 file that contains video+audio which in many cases
+                #  isn't the best under the max size.
+                # When I tried to force it to download video and audio separately then merging
+                #  using `CRAWLER_YTDLP_ARGS=bestaudio[filesize<500M]+bestvideo[filesize<500M]/best[filesize<500M]`
+                #  and `CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE=-1` it saved just the audio file.
                 CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE = "500";
                 CRAWLER_PARSER_MEM_LIMIT_MB = "4096";
+                # Set CRAWLER_YTDLP_ARGS on `.env` because it uses a weird format.
               };
               environmentFiles = [
                 config.secrets.karakeep-dotenv.path
               ];
               volumes = [
                 "${karakeepDataDir}:/data"
+                "${cookiesFile}:/cookies.json"
               ];
               networks = [ "karakeep" ];
             };
