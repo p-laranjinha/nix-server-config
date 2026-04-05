@@ -75,6 +75,14 @@ in
                 OAUTH_WELLKNOWN_URL = "https://auth.orangepebble.net/.well-known/openid-configuration";
                 OAUTH_CLIENT_ID = "karakeep";
                 OAUTH_PROVIDER_NAME = "Authelia";
+
+                MAX_ASSET_SIZE_MB = "200";
+                CRAWLER_FULL_PAGE_SCREENSHOT = "true";
+                CRAWLER_SCREENSHOT_TIMEOUT_SEC = "30";
+                CRAWLER_FULL_PAGE_ARCHIVE = "true";
+                CRAWLER_VIDEO_DOWNLOAD = "true";
+                CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE = "500";
+                CRAWLER_PARSER_MEM_LIMIT_MB = "4096";
               };
               environmentFiles = [
                 config.secrets.karakeep-dotenv.path
