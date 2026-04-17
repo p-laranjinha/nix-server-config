@@ -58,7 +58,6 @@
           id = "music";
           path = "~/public/music/personal";
           devices = [
-            "phone"
             "desktop"
           ];
         };
